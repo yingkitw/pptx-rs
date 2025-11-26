@@ -5,6 +5,10 @@
 pub struct SlideContent {
     pub title: String,
     pub content: Vec<String>,
+    pub title_size: Option<u32>,      // Font size in points
+    pub content_size: Option<u32>,    // Font size in points
+    pub title_bold: bool,
+    pub content_bold: bool,
 }
 
 impl SlideContent {
@@ -12,11 +16,39 @@ impl SlideContent {
         SlideContent {
             title: title.to_string(),
             content: Vec::new(),
+            title_size: Some(44),      // Default: 44pt
+            content_size: Some(28),    // Default: 28pt
+            title_bold: true,
+            content_bold: false,
         }
     }
 
     pub fn add_bullet(mut self, text: &str) -> Self {
         self.content.push(text.to_string());
+        self
+    }
+
+    /// Set title font size (in points)
+    pub fn title_size(mut self, size: u32) -> Self {
+        self.title_size = Some(size);
+        self
+    }
+
+    /// Set content font size (in points)
+    pub fn content_size(mut self, size: u32) -> Self {
+        self.content_size = Some(size);
+        self
+    }
+
+    /// Set title bold
+    pub fn title_bold(mut self, bold: bool) -> Self {
+        self.title_bold = bold;
+        self
+    }
+
+    /// Set content bold
+    pub fn content_bold(mut self, bold: bool) -> Self {
+        self.content_bold = bold;
         self
     }
 }
@@ -163,6 +195,12 @@ pub fn create_slide_xml(slide_num: usize, title: &str) -> String {
 }
 
 pub fn create_slide_xml_with_content(_slide_num: usize, content: &SlideContent) -> String {
+    // Convert point sizes to hundredths of a point (PPTX format)
+    let title_size = content.title_size.unwrap_or(44) * 100;
+    let content_size = content.content_size.unwrap_or(28) * 100;
+    let title_bold = if content.title_bold { "1" } else { "0" };
+    let content_bold = if content.content_bold { "1" } else { "0" };
+
     let mut xml = format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
@@ -205,13 +243,13 @@ pub fn create_slide_xml_with_content(_slide_num: usize, content: &SlideContent) 
 <a:lstStyle/>
 <a:p>
 <a:r>
-<a:rPr lang="en-US" sz="4400" b="1"/>
+<a:rPr lang="en-US" sz="{}" b="{}"/>
 <a:t>{}</a:t>
 </a:r>
 </a:p>
 </p:txBody>
 </p:sp>"#,
-        escape_xml(&content.title)
+        title_size, title_bold, escape_xml(&content.title)
     );
 
     if !content.content.is_empty() {
@@ -242,11 +280,11 @@ pub fn create_slide_xml_with_content(_slide_num: usize, content: &SlideContent) 
 <a:p>
 <a:pPr lvl="0"/>
 <a:r>
-<a:rPr lang="en-US" sz="2800"/>
+<a:rPr lang="en-US" sz="{}" b="{}"/>
 <a:t>{}</a:t>
 </a:r>
 </a:p>"#,
-                escape_xml(bullet)
+                content_size, content_bold, escape_xml(bullet)
             ));
         }
 

@@ -2,9 +2,15 @@
 
 mod builder;
 mod xml;
+pub mod text;
+pub mod shapes;
+pub mod tables;
 
 pub use builder::{create_pptx, create_pptx_with_content};
 pub use xml::SlideContent;
+pub use text::{TextFormat, FormattedText};
+pub use shapes::{Shape, ShapeType, ShapeFill, ShapeLine};
+pub use tables::{Table, TableRow, TableCell, TableBuilder};
 
 #[cfg(test)]
 mod tests {

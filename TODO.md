@@ -24,14 +24,21 @@
 - [x] Created CODEBASE.md documentation
 - [x] Improved public API exports
 
+### 4. Advanced Content Features ✓
+- [x] Text formatting (italic, underline, colors)
+- [x] Font selection and sizing
+- [x] Shape creation (rectangles, circles, arrows, etc.)
+- [x] Shape colors and fills
+- [x] Text formatting module with builder API
+- [x] Shapes module with multiple shape types
+- [x] Tables module with cell and row support
+- [x] Advanced features example
+
 ## High Priority
 
-### 1. Advanced Content Features
+### 1. Image Insertion and Embedding
 - [ ] Image insertion and embedding
-- [ ] Shape creation (rectangles, circles, arrows, etc.)
-- [ ] Shape colors and fills
-- [ ] Text formatting (italic, underline, colors)
-- [ ] Font selection and sizing
+- [ ] Image scaling and positioning
 
 ### 2. Tables & Charts
 - [ ] Table creation and formatting
