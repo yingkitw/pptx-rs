@@ -54,6 +54,13 @@ pub enum Commands {
         #[arg(value_name = "FILE")]
         file: String,
     },
+    
+    /// Validate a PPTX file for ECMA-376 compliance
+    Validate {
+        /// PPTX file to validate
+        #[arg(value_name = "FILE")]
+        file: String,
+    },
 }
 
 // Legacy types for backward compatibility with existing command execution code
@@ -85,11 +92,17 @@ pub struct InfoArgs {
 }
 
 #[derive(Debug, Clone)]
+pub struct ValidateArgs {
+    pub file: String,
+}
+
+#[derive(Debug, Clone)]
 pub enum Command {
     Create(CreateArgs),
     FromMarkdown(FromMarkdownArgs),
     Md2Ppt(Md2PptArgs),
     Info(InfoArgs),
+    Validate(ValidateArgs),
 }
 
 impl From<Commands> for Command {
@@ -131,6 +144,9 @@ impl From<Commands> for Command {
             }
             Commands::Info { file } => {
                 Command::Info(InfoArgs { file })
+            }
+            Commands::Validate { file } => {
+                Command::Validate(ValidateArgs { file })
             }
         }
     }

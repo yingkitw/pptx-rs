@@ -93,17 +93,13 @@ fn generate_cell_xml(cell: &TableCell) -> String {
     let font_size = cell.font_size.unwrap_or(20) * 100;
     rpr_attrs.push(format!("sz=\"{}\"", font_size));
     
-    // Bold
-    if cell.bold {
-        rpr_attrs.push("b=\"1\"".to_string());
-    }
+    // Bold (always include, "0" for non-bold, "1" for bold)
+    rpr_attrs.push(format!("b=\"{}\"", if cell.bold { "1" } else { "0" }));
     
-    // Italic
-    if cell.italic {
-        rpr_attrs.push("i=\"1\"".to_string());
-    }
+    // Italic (always include, "0" for non-italic, "1" for italic)
+    rpr_attrs.push(format!("i=\"{}\"", if cell.italic { "1" } else { "0" }));
     
-    // Underline
+    // Underline (only include if underlined)
     if cell.underline {
         rpr_attrs.push("u=\"sng\"".to_string());
     }
@@ -151,12 +147,10 @@ fn generate_cell_xml(cell: &TableCell) -> String {
                 let mut rpr_attrs = vec!["lang=\"en-US\"".to_string()];
                 let font_size = cell.font_size.unwrap_or(20) * 100;
                 rpr_attrs.push(format!("sz=\"{}\"", font_size));
-                if cell.bold {
-                    rpr_attrs.push("b=\"1\"".to_string());
-                }
-                if cell.italic {
-                    rpr_attrs.push("i=\"1\"".to_string());
-                }
+                // Bold (always include, "0" for non-bold, "1" for bold)
+                rpr_attrs.push(format!("b=\"{}\"", if cell.bold { "1" } else { "0" }));
+                // Italic (always include, "0" for non-italic, "1" for italic)
+                rpr_attrs.push(format!("i=\"{}\"", if cell.italic { "1" } else { "0" }));
                 if cell.underline {
                     rpr_attrs.push("u=\"sng\"".to_string());
                 }

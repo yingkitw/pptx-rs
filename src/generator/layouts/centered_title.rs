@@ -2,6 +2,9 @@
 
 use super::common::{SlideXmlBuilder, generate_text_props};
 use crate::generator::slide_content::SlideContent;
+use crate::generator::constants::{
+    TITLE_X, CENTERED_TITLE_Y, TITLE_WIDTH, CENTERED_TITLE_HEIGHT, TITLE_FONT_SIZE,
+};
 
 /// Centered title slide layout generator
 pub struct CenteredTitleLayout;
@@ -9,7 +12,7 @@ pub struct CenteredTitleLayout;
 impl CenteredTitleLayout {
     /// Generate centered title slide XML
     pub fn generate(content: &SlideContent) -> String {
-        let title_size = content.title_size.unwrap_or(54) * 100;
+        let title_size = content.title_size.unwrap_or((TITLE_FONT_SIZE / 100) as u32) * 100;
         let title_props = generate_text_props(
             title_size,
             content.title_bold,
@@ -21,7 +24,7 @@ impl CenteredTitleLayout {
         SlideXmlBuilder::new()
             .start_slide_with_bg()
             .start_sp_tree()
-            .add_centered_title(2, 457200, 2743200, 8230200, 1371600, &content.title, &title_props)
+            .add_centered_title(2, TITLE_X, CENTERED_TITLE_Y, TITLE_WIDTH, CENTERED_TITLE_HEIGHT, &content.title, &title_props)
             .end_sp_tree()
             .end_slide()
             .build()

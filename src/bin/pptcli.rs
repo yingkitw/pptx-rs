@@ -1,7 +1,7 @@
 //! PPTX CLI - Command-line tool for creating PowerPoint presentations
 
 use clap::Parser;
-use ppt_rs::cli::{Cli, Commands, CreateCommand, FromMarkdownCommand, InfoCommand};
+use ppt_rs::cli::{Cli, Commands, CreateCommand, FromMarkdownCommand, InfoCommand, ValidateCommand};
 
 fn main() {
     let cli = Cli::parse();
@@ -66,6 +66,17 @@ fn main() {
         Commands::Info { file } => {
             match InfoCommand::execute(&file) {
                 Ok(_) => {}
+                Err(e) => {
+                    eprintln!("✗ Error: {e}");
+                    std::process::exit(1);
+                }
+            }
+        }
+        Commands::Validate { file } => {
+            match ValidateCommand::execute(&file) {
+                Ok(_) => {
+                    println!("\n✓ Validation completed successfully");
+                }
                 Err(e) => {
                     eprintln!("✗ Error: {e}");
                     std::process::exit(1);

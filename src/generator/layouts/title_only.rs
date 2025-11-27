@@ -2,6 +2,9 @@
 
 use super::common::{SlideXmlBuilder, generate_text_props};
 use crate::generator::slide_content::SlideContent;
+use crate::generator::constants::{
+    TITLE_X, TITLE_Y, TITLE_WIDTH, TITLE_HEIGHT, TITLE_FONT_SIZE,
+};
 
 /// Title-only slide layout generator
 pub struct TitleOnlyLayout;
@@ -9,7 +12,7 @@ pub struct TitleOnlyLayout;
 impl TitleOnlyLayout {
     /// Generate title-only slide XML
     pub fn generate(content: &SlideContent) -> String {
-        let title_size = content.title_size.unwrap_or(44) * 100;
+        let title_size = content.title_size.unwrap_or((TITLE_FONT_SIZE / 100) as u32) * 100;
         let title_props = generate_text_props(
             title_size,
             content.title_bold,
@@ -21,7 +24,7 @@ impl TitleOnlyLayout {
         SlideXmlBuilder::new()
             .start_slide_with_bg()
             .start_sp_tree()
-            .add_title(2, 457200, 274638, 8230200, 1143000, &content.title, &title_props, "title")
+            .add_title(2, TITLE_X, TITLE_Y, TITLE_WIDTH, TITLE_HEIGHT, &content.title, &title_props, "title")
             .end_sp_tree()
             .end_slide()
             .build()

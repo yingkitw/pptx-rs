@@ -1,10 +1,9 @@
 //! Common utilities for slide XML generation
 
 use crate::core::XmlWriter;
-
-/// Standard slide dimensions in EMU
-pub const SLIDE_WIDTH: u32 = 9144000;
-pub const SLIDE_HEIGHT: u32 = 6858000;
+use crate::generator::constants::{
+    SLIDE_WIDTH, SLIDE_HEIGHT,
+};
 
 /// XML declaration and namespaces
 pub const XML_DECL: &str = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>"#;

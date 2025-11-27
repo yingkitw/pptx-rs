@@ -1,5 +1,8 @@
 //! PPTX file generator - creates proper ZIP-based PPTX files
 
+// Layout constants (shared positioning and sizing values)
+pub mod constants;
+
 // Core XML generation modules
 pub mod slide_content;
 pub mod package_xml;

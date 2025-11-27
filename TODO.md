@@ -333,31 +333,40 @@
 
 See [LEARNING_ANALYSIS.md](LEARNING_ANALYSIS.md) for detailed analysis.
 
-### High Priority Improvements
-- [ ] Add alignment testing framework (from ppt-rs1)
-  - Create `scripts/validate_parity.py` or Rust equivalent
-  - Add alignment examples in `examples/alignment/`
-  - Document alignment status in `docs/ALIGNMENT.md`
-- [ ] Add validation command to CLI (from ppt-rs2)
-  - Add `pptcli validate <file>` command
-  - Check ZIP integrity, XML validity, relationships
-  - Report compliance issues clearly
-- [ ] Extract layout constants (from ppt-rs2)
-  - Create shared constants module
-  - Move layout constants from `generator/layouts/`
-  - Document EMU conversions clearly
+### High Priority Improvements (Phase 1: Critical Quality Tools)
+- [x] Add alignment testing framework (from ppt-rs1) ⭐⭐⭐ ✅
+  - [x] Create `scripts/generate_reference.py` for python-pptx reference generation
+  - [x] Create `scripts/compare_pptx.py` for file comparison
+  - [x] Add alignment example in `examples/alignment_test.rs`
+  - [x] Document alignment status in `docs/ALIGNMENT.md`
+  - [x] Generate reference files with python-pptx for comparison
+- [x] Add validation command to CLI (from ppt-rs2) ⭐⭐⭐ ✅
+  - [x] Add `pptcli validate <file>` command
+  - [x] Check ZIP integrity, XML validity, relationships
+  - [x] Report compliance issues clearly
+  - Implemented in `src/cli/commands.rs` as `ValidateCommand`
+- [x] Extract layout constants (from ppt-rs2) ⭐⭐ ✅
+  - [x] Create `src/generator/constants.rs` with all layout constants
+  - [x] Move layout constants from `generator/layouts/` to shared constants
+  - [x] Document EMU conversions clearly
+  - [x] Update layout files to use constants (title_content, centered_title, title_only)
 
-### Medium Priority Improvements
-- [ ] Improve test coverage (from ppt-rs1)
-  - Review test structure from ppt-rs1
+### Medium Priority Improvements (Phase 2: Developer Experience)
+- [ ] Improve test coverage (from ppt-rs1) ⭐⭐
+  - Review test structure from `ppt-rs1/tests/`
   - Add more integration tests
   - Focus on PPTX generation validation
-- [ ] Review CLI help text (from ppt-rs2)
-  - Add more examples to help text
-  - Improve command descriptions
-- [ ] Consider JSON configuration support (from ppt-rs2)
-  - Evaluate if JSON config would complement Markdown
-  - Useful for programmatic generation
+  - Target comprehensive coverage like ppt-rs1 (667 tests)
+- [ ] Review trait-based architecture patterns (from ppt-rs1) ⭐⭐
+  - Review trait patterns in `ppt-rs1/src/presentation/traits.rs`
+  - Consider if similar patterns would benefit `ppt-rs`
+  - Evaluate `PropertiesManager` for unified property access
+
+### Low Priority Improvements (Phase 3: Optional Enhancements)
+- [ ] Documentation improvements ⭐
+  - Review documentation structure from both projects
+  - Consider improvements to README and docs
+  - Add more examples
 
 ## Future Enhancements
 

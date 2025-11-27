@@ -3,6 +3,12 @@
 use super::common::{SlideXmlBuilder, generate_text_props, escape_xml};
 use crate::generator::slide_content::SlideContent;
 use crate::generator::shapes_xml::generate_shape_xml;
+use crate::generator::constants::{
+    TITLE_X, TITLE_Y, TITLE_WIDTH, TITLE_HEIGHT, TITLE_HEIGHT_BIG,
+    CONTENT_X, CONTENT_Y_START, CONTENT_Y_START_BIG,
+    CONTENT_WIDTH, CONTENT_HEIGHT, CONTENT_HEIGHT_BIG,
+    TITLE_FONT_SIZE, CONTENT_FONT_SIZE,
+};
 
 /// Standard title and content layout
 pub struct TitleContentLayout;
@@ -10,8 +16,8 @@ pub struct TitleContentLayout;
 impl TitleContentLayout {
     /// Generate title and content slide XML
     pub fn generate(content: &SlideContent) -> String {
-        let title_size = content.title_size.unwrap_or(44) * 100;
-        let content_size = content.content_size.unwrap_or(28) * 100;
+        let title_size = content.title_size.unwrap_or((TITLE_FONT_SIZE / 100) as u32) * 100;
+        let content_size = content.content_size.unwrap_or((CONTENT_FONT_SIZE / 100) as u32) * 100;
 
         let title_props = generate_text_props(
             title_size,
@@ -32,13 +38,13 @@ impl TitleContentLayout {
         let mut builder = SlideXmlBuilder::new()
             .start_slide_with_bg()
             .start_sp_tree()
-            .add_title(2, 457200, 274638, 8230200, 1143000, &content.title, &title_props, "title");
+            .add_title(2, TITLE_X, TITLE_Y, TITLE_WIDTH, TITLE_HEIGHT, &content.title, &title_props, "title");
 
         // Add table or bullets
         if let Some(ref table) = content.table {
             builder = builder.raw(&crate::generator::tables_xml::generate_table_xml(table, 3));
         } else if !content.content.is_empty() {
-            builder = builder.start_content_body(3, 457200, 1600200, 8230200, 4572000);
+            builder = builder.start_content_body(3, CONTENT_X, CONTENT_Y_START, CONTENT_WIDTH, CONTENT_HEIGHT);
             for bullet in &content.content {
                 builder = builder.add_bullet(bullet, &content_props, 0);
             }
@@ -105,8 +111,8 @@ pub struct TitleBigContentLayout;
 impl TitleBigContentLayout {
     /// Generate title and big content slide XML
     pub fn generate(content: &SlideContent) -> String {
-        let title_size = content.title_size.unwrap_or(44) * 100;
-        let content_size = content.content_size.unwrap_or(28) * 100;
+        let title_size = content.title_size.unwrap_or((TITLE_FONT_SIZE / 100) as u32) * 100;
+        let content_size = content.content_size.unwrap_or((CONTENT_FONT_SIZE / 100) as u32) * 100;
 
         let title_props = generate_text_props(
             title_size,
@@ -127,10 +133,10 @@ impl TitleBigContentLayout {
         let mut builder = SlideXmlBuilder::new()
             .start_slide_with_bg()
             .start_sp_tree()
-            .add_title(2, 457200, 274638, 8230200, 914400, &content.title, &title_props, "title");
+            .add_title(2, TITLE_X, TITLE_Y, TITLE_WIDTH, TITLE_HEIGHT_BIG, &content.title, &title_props, "title");
 
         if !content.content.is_empty() {
-            builder = builder.start_content_body(3, 457200, 1189200, 8230200, 5668800);
+            builder = builder.start_content_body(3, CONTENT_X, CONTENT_Y_START_BIG, CONTENT_WIDTH, CONTENT_HEIGHT_BIG);
             for bullet in &content.content {
                 builder = builder.add_bullet(bullet, &content_props, 0);
             }
