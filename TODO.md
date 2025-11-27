@@ -208,14 +208,16 @@
 - [x] TextFrame with margins and anchor
 - [x] Font family support
 
-### 6. OXML Element Implementations
-- [ ] `oxml/presentation.rs` - Presentation elements
-- [ ] `oxml/slide.rs` - Slide elements
-- [ ] `oxml/shapes/` - Shape elements
-- [ ] `oxml/text.rs` - Text elements
-- [ ] `oxml/table.rs` - Table elements
-- [ ] `oxml/dml/` - DML elements
-- [ ] `oxml/chart/` - Chart elements
+### 6. OXML Element Implementations ✓
+- [x] `oxml/presentation.rs` - PresentationReader, PresentationInfo (247 lines)
+- [x] `oxml/slide.rs` - SlideParser, ParsedSlide, ParsedShape (447 lines)
+- [x] `oxml/shapes/mod.rs` - Transform2D, PresetGeometry, SolidFill, LineProperties, ShapeProperties (306 lines)
+- [x] `oxml/text.rs` - TextBody, TextParagraph, TextRun, RunProperties, BodyProperties (381 lines)
+- [x] `oxml/table.rs` - Table, TableRow, TableCell, GridColumn (304 lines)
+- [x] `oxml/editor.rs` - PresentationEditor (400 lines)
+- [x] `oxml/xmlchemy.rs` - XmlParser, XmlElement (285 lines)
+- [x] `oxml/dml/mod.rs` - Color, Fill, Outline, GradientFill, Point, Size (352 lines)
+- [x] `oxml/chart/mod.rs` - ChartKind, ChartSeries, ChartAxis, ChartLegend, ChartTitle (386 lines)
 
 ## Lower Priority
 

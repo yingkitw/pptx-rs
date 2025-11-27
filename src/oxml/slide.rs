@@ -286,20 +286,44 @@ impl SlideParser {
     }
 
     fn is_title_shape(sp: &XmlElement) -> bool {
+        // Check placeholder type first
         if let Some(nv_pr) = sp.find_descendant("nvPr") {
             if let Some(ph) = nv_pr.find("ph") {
                 let ph_type = ph.attr("type").unwrap_or("");
-                return ph_type == "title" || ph_type == "ctrTitle";
+                if ph_type == "title" || ph_type == "ctrTitle" {
+                    return true;
+                }
+            }
+        }
+        // Also check shape name for textbox-based titles
+        if let Some(cnv_pr) = sp.find_descendant("cNvPr") {
+            if let Some(name) = cnv_pr.attr("name") {
+                let name_lower = name.to_lowercase();
+                if name_lower == "title" || name_lower.contains("title") {
+                    return true;
+                }
             }
         }
         false
     }
 
     fn is_body_shape(sp: &XmlElement) -> bool {
+        // Check placeholder type first
         if let Some(nv_pr) = sp.find_descendant("nvPr") {
             if let Some(ph) = nv_pr.find("ph") {
                 let ph_type = ph.attr("type").unwrap_or("body");
-                return ph_type == "body" || ph_type.is_empty();
+                if ph_type == "body" || ph_type.is_empty() {
+                    return true;
+                }
+            }
+        }
+        // Also check shape name for textbox-based content
+        if let Some(cnv_pr) = sp.find_descendant("cNvPr") {
+            if let Some(name) = cnv_pr.attr("name") {
+                let name_lower = name.to_lowercase();
+                if name_lower == "content" || name_lower.contains("content") {
+                    return true;
+                }
             }
         }
         false

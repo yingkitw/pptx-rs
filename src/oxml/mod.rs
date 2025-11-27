@@ -31,3 +31,18 @@ pub use editor::PresentationEditor;
 
 // Namespace utilities
 pub use ns::Namespace;
+
+// Text elements
+pub use text::{TextBody, TextParagraph, TextRun as OxmlTextRun, RunProperties, ParagraphProperties, BodyProperties};
+
+// Table elements
+pub use table::{Table as OxmlTable, TableRow as OxmlTableRow, TableCell as OxmlTableCell, GridColumn, TableCellProperties};
+
+// Shape elements
+pub use shapes::{Transform2D, PresetGeometry, SolidFill, LineProperties, ShapeProperties, NonVisualProperties};
+
+// DML elements
+pub use dml::{Color, Fill, Outline, GradientFill, GradientStop, PatternFill, EffectExtent, Point, Size};
+
+// Chart elements
+pub use chart::{ChartKind, ChartSeries as OxmlChartSeries, ChartAxis, ChartLegend, ChartTitle, NumericData, StringData, DataPoint, CategoryPoint};

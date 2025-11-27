@@ -175,8 +175,8 @@ fn create_title_only_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="2" name="Title"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="title"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -187,9 +187,10 @@ fn create_title_only_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
 <a:lstStyle/>
 <a:p>
+<a:pPr algn="l"/>
 <a:r>
 {}
 <a:t>{}</a:t>
@@ -243,8 +244,8 @@ fn create_centered_title_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="2" name="Title"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="ctrTitle"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -255,7 +256,7 @@ fn create_centered_title_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
 <a:lstStyle/>
 <a:p>
 <a:pPr algn="ctr"/>
@@ -314,8 +315,8 @@ fn create_title_and_big_content_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="2" name="Title"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="title"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -326,9 +327,10 @@ fn create_title_and_big_content_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
 <a:lstStyle/>
 <a:p>
+<a:pPr algn="l"/>
 <a:r>
 {}
 <a:t>{}</a:t>
@@ -345,8 +347,8 @@ fn create_title_and_big_content_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="3" name="Content"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="body" idx="1"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -357,7 +359,7 @@ fn create_title_and_big_content_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0"/>
 <a:lstStyle/>"#
         );
 
@@ -441,8 +443,8 @@ fn create_two_column_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="2" name="Title"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="title"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -453,9 +455,10 @@ fn create_two_column_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
 <a:lstStyle/>
 <a:p>
+<a:pPr algn="l"/>
 <a:r>
 {}
 <a:t>{}</a:t>
@@ -485,8 +488,8 @@ fn create_two_column_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="3" name="Left Content"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="body" idx="1"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -497,7 +500,7 @@ fn create_two_column_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0"/>
 <a:lstStyle/>"#
         );
 
@@ -528,8 +531,8 @@ fn create_two_column_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="4" name="Right Content"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="body" idx="2"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -540,7 +543,7 @@ fn create_two_column_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0"/>
 <a:lstStyle/>"#
             );
 
@@ -617,8 +620,8 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="2" name="Title"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="title"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -629,9 +632,10 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
 <a:lstStyle/>
 <a:p>
+<a:pPr algn="l"/>
 <a:r>
 {}
 <a:t>{}</a:t>
@@ -653,8 +657,8 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
 <p:sp>
 <p:nvSpPr>
 <p:cNvPr id="3" name="Content"/>
-<p:cNvSpPr><a:spLocks noGrp="1"/></p:cNvSpPr>
-<p:nvPr><p:ph type="body" idx="1"/></p:nvPr>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
@@ -665,7 +669,7 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
 <a:noFill/>
 </p:spPr>
 <p:txBody>
-<a:bodyPr/>
+<a:bodyPr wrap="square" rtlCol="0"/>
 <a:lstStyle/>"#
         );
 
