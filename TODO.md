@@ -24,27 +24,49 @@
 - [x] Created CODEBASE.md documentation
 - [x] Improved public API exports
 
-### 4. Advanced Content Features ✓
-- [x] Text formatting (italic, underline, colors)
-- [x] Font selection and sizing
-- [x] Shape creation (rectangles, circles, arrows, etc.)
-- [x] Shape colors and fills
+### 4. Advanced Content Features (Partial) ⏳
 - [x] Text formatting module with builder API
-- [x] Shapes module with multiple shape types
-- [x] Tables module with cell and row support
+- [x] Font sizing (working: 8pt to 96pt)
+- [x] Bold formatting (working)
+- [ ] Italic formatting (defined, not implemented)
+- [ ] Underline formatting (defined, not implemented)
+- [ ] Text colors (defined, not implemented)
+- [x] Shapes module with multiple shape types (defined)
+- [x] Tables module with cell and row support (defined)
+- [ ] Table XML generation (not implemented)
+- [ ] Table integration into slides (not implemented)
 - [x] Advanced features example
 
 ## High Priority
 
-### 1. Image Insertion and Embedding
-- [ ] Image insertion and embedding
-- [ ] Image scaling and positioning
+### 1. Complete Text Styling (2-3 hours)
+- [ ] Implement italic formatting in XML
+- [ ] Implement underline formatting in XML
+- [ ] Implement text color in XML
+- [ ] Update SlideContent to use TextFormat
+- [ ] Test and verify in PowerPoint
 
-### 2. Tables & Charts
-- [ ] Table creation and formatting
-- [ ] Chart generation (bar, line, pie)
-- [ ] Chart data binding
-- [ ] Legend and axis labels
+### 2. Table Implementation (4-6 hours)
+- [ ] Design table XML structure
+- [ ] Implement table XML generation
+- [ ] Implement cell XML generation
+- [ ] Integrate tables into slide generation
+- [ ] Test with various table sizes
+- [ ] Verify in PowerPoint
+
+### 3. Image Implementation (3-4 hours)
+- [ ] Design image embedding approach
+- [ ] Implement image XML generation
+- [ ] Handle image positioning and sizing
+- [ ] Integrate images into slide generation
+- [ ] Test with various image formats
+
+### 4. Chart Implementation (5-7 hours)
+- [ ] Design chart XML structure
+- [ ] Implement chart XML generation
+- [ ] Support multiple chart types
+- [ ] Integrate charts into slide generation
+- [ ] Test with various data sets
 
 ### 3. Reading & Modification
 - [ ] ZIP reading in `opc/package.rs`

@@ -9,6 +9,12 @@ pub struct SlideContent {
     pub content_size: Option<u32>,    // Font size in points
     pub title_bold: bool,
     pub content_bold: bool,
+    pub title_italic: bool,
+    pub content_italic: bool,
+    pub title_underline: bool,
+    pub content_underline: bool,
+    pub title_color: Option<String>,  // RGB hex color (e.g., "FF0000")
+    pub content_color: Option<String>, // RGB hex color
 }
 
 impl SlideContent {
@@ -20,6 +26,12 @@ impl SlideContent {
             content_size: Some(28),    // Default: 28pt
             title_bold: true,
             content_bold: false,
+            title_italic: false,
+            content_italic: false,
+            title_underline: false,
+            content_underline: false,
+            title_color: None,
+            content_color: None,
         }
     }
 
@@ -51,6 +63,42 @@ impl SlideContent {
         self.content_bold = bold;
         self
     }
+
+    /// Set title italic
+    pub fn title_italic(mut self, italic: bool) -> Self {
+        self.title_italic = italic;
+        self
+    }
+
+    /// Set content italic
+    pub fn content_italic(mut self, italic: bool) -> Self {
+        self.content_italic = italic;
+        self
+    }
+
+    /// Set title underline
+    pub fn title_underline(mut self, underline: bool) -> Self {
+        self.title_underline = underline;
+        self
+    }
+
+    /// Set content underline
+    pub fn content_underline(mut self, underline: bool) -> Self {
+        self.content_underline = underline;
+        self
+    }
+
+    /// Set title color (RGB hex format, e.g., "FF0000" for red)
+    pub fn title_color(mut self, color: &str) -> Self {
+        self.title_color = Some(color.trim_start_matches('#').to_uppercase());
+        self
+    }
+
+    /// Set content color (RGB hex format)
+    pub fn content_color(mut self, color: &str) -> Self {
+        self.content_color = Some(color.trim_start_matches('#').to_uppercase());
+        self
+    }
 }
 
 pub fn escape_xml(s: &str) -> String {
@@ -59,6 +107,38 @@ pub fn escape_xml(s: &str) -> String {
         .replace(">", "&gt;")
         .replace("\"", "&quot;")
         .replace("'", "&apos;")
+}
+
+/// Generate text properties XML with formatting
+fn generate_text_props(
+    size: u32,
+    bold: bool,
+    italic: bool,
+    underline: bool,
+    color: Option<&str>,
+) -> String {
+    let mut props = format!(
+        r#"<a:rPr lang="en-US" sz="{}" b="{}" i="{}""#,
+        size,
+        if bold { "1" } else { "0" },
+        if italic { "1" } else { "0" }
+    );
+
+    if underline {
+        props.push_str(r#" u="sng""#);
+    }
+
+    props.push('>');
+
+    if let Some(hex_color) = color {
+        props.push_str(&format!(
+            r#"<a:solidFill><a:srgbClr val="{}"/></a:solidFill>"#,
+            hex_color
+        ));
+    }
+
+    props.push_str("</a:rPr>");
+    props
 }
 
 pub fn create_content_types_xml(slides: usize) -> String {
@@ -198,8 +278,15 @@ pub fn create_slide_xml_with_content(_slide_num: usize, content: &SlideContent) 
     // Convert point sizes to hundredths of a point (PPTX format)
     let title_size = content.title_size.unwrap_or(44) * 100;
     let content_size = content.content_size.unwrap_or(28) * 100;
-    let title_bold = if content.title_bold { "1" } else { "0" };
-    let content_bold = if content.content_bold { "1" } else { "0" };
+
+    // Generate title text properties
+    let title_props = generate_text_props(
+        title_size,
+        content.title_bold,
+        content.title_italic,
+        content.title_underline,
+        content.title_color.as_deref(),
+    );
 
     let mut xml = format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -243,13 +330,13 @@ pub fn create_slide_xml_with_content(_slide_num: usize, content: &SlideContent) 
 <a:lstStyle/>
 <a:p>
 <a:r>
-<a:rPr lang="en-US" sz="{}" b="{}"/>
+{}
 <a:t>{}</a:t>
 </a:r>
 </a:p>
 </p:txBody>
 </p:sp>"#,
-        title_size, title_bold, escape_xml(&content.title)
+        title_props, escape_xml(&content.title)
     );
 
     if !content.content.is_empty() {
@@ -274,17 +361,26 @@ pub fn create_slide_xml_with_content(_slide_num: usize, content: &SlideContent) 
 <a:lstStyle/>"#
         );
 
+        // Generate content text properties
+        let content_props = generate_text_props(
+            content_size,
+            content.content_bold,
+            content.content_italic,
+            content.content_underline,
+            content.content_color.as_deref(),
+        );
+
         for bullet in content.content.iter() {
             xml.push_str(&format!(
                 r#"
 <a:p>
 <a:pPr lvl="0"/>
 <a:r>
-<a:rPr lang="en-US" sz="{}" b="{}"/>
+{}
 <a:t>{}</a:t>
 </a:r>
 </a:p>"#,
-                content_size, content_bold, escape_xml(bullet)
+                content_props, escape_xml(bullet)
             ));
         }
 

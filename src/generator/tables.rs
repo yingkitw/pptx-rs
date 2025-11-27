@@ -84,6 +84,19 @@ impl Table {
         self.rows.len()
     }
 
+    /// Get total table width (sum of column widths)
+    pub fn width(&self) -> u32 {
+        self.column_widths.iter().sum()
+    }
+
+    /// Get total table height (sum of row heights)
+    pub fn height(&self) -> u32 {
+        self.rows
+            .iter()
+            .map(|r| r.height.unwrap_or(400000))
+            .sum()
+    }
+
     /// Create a simple table from 2D data
     pub fn from_data(data: Vec<Vec<&str>>, column_widths: Vec<u32>, x: u32, y: u32) -> Self {
         let rows = data
