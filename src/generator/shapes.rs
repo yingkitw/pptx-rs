@@ -1,28 +1,157 @@
 //! Shape creation support for PPTX generation
+//!
+//! Provides shape types, fills, lines, and builders for creating shapes in slides.
 
-/// Shape types
-#[derive(Clone, Debug, Copy)]
+/// Shape types available in PPTX
+#[derive(Clone, Debug, Copy, PartialEq)]
 pub enum ShapeType {
+    // Basic shapes
     Rectangle,
-    Circle,
+    RoundedRectangle,
+    Ellipse,
+    Circle, // Alias for Ellipse
     Triangle,
+    RightTriangle,
     Diamond,
-    Arrow,
-    Star,
+    Pentagon,
     Hexagon,
+    Octagon,
+    
+    // Arrows
+    RightArrow,
+    LeftArrow,
+    UpArrow,
+    DownArrow,
+    LeftRightArrow,
+    UpDownArrow,
+    BentArrow,
+    UTurnArrow,
+    
+    // Stars and banners
+    Star4,
+    Star5,
+    Star6,
+    Star8,
+    Ribbon,
+    Wave,
+    
+    // Callouts
+    WedgeRectCallout,
+    WedgeEllipseCallout,
+    CloudCallout,
+    
+    // Flow chart
+    FlowChartProcess,
+    FlowChartDecision,
+    FlowChartTerminator,
+    FlowChartDocument,
+    
+    // Other
+    Heart,
+    Lightning,
+    Sun,
+    Moon,
+    Cloud,
+    Brace,
+    Bracket,
+    Plus,
+    Minus,
 }
 
 impl ShapeType {
-    /// Get the preset geometry name for the shape
+    /// Get the preset geometry name for the shape (OOXML preset name)
     pub fn preset_name(&self) -> &'static str {
         match self {
             ShapeType::Rectangle => "rect",
-            ShapeType::Circle => "ellipse",
+            ShapeType::RoundedRectangle => "roundRect",
+            ShapeType::Ellipse | ShapeType::Circle => "ellipse",
             ShapeType::Triangle => "triangle",
+            ShapeType::RightTriangle => "rtTriangle",
             ShapeType::Diamond => "diamond",
-            ShapeType::Arrow => "rightArrow",
-            ShapeType::Star => "star5",
+            ShapeType::Pentagon => "pentagon",
             ShapeType::Hexagon => "hexagon",
+            ShapeType::Octagon => "octagon",
+            
+            ShapeType::RightArrow => "rightArrow",
+            ShapeType::LeftArrow => "leftArrow",
+            ShapeType::UpArrow => "upArrow",
+            ShapeType::DownArrow => "downArrow",
+            ShapeType::LeftRightArrow => "leftRightArrow",
+            ShapeType::UpDownArrow => "upDownArrow",
+            ShapeType::BentArrow => "bentArrow",
+            ShapeType::UTurnArrow => "uturnArrow",
+            
+            ShapeType::Star4 => "star4",
+            ShapeType::Star5 => "star5",
+            ShapeType::Star6 => "star6",
+            ShapeType::Star8 => "star8",
+            ShapeType::Ribbon => "ribbon2",
+            ShapeType::Wave => "wave",
+            
+            ShapeType::WedgeRectCallout => "wedgeRectCallout",
+            ShapeType::WedgeEllipseCallout => "wedgeEllipseCallout",
+            ShapeType::CloudCallout => "cloudCallout",
+            
+            ShapeType::FlowChartProcess => "flowChartProcess",
+            ShapeType::FlowChartDecision => "flowChartDecision",
+            ShapeType::FlowChartTerminator => "flowChartTerminator",
+            ShapeType::FlowChartDocument => "flowChartDocument",
+            
+            ShapeType::Heart => "heart",
+            ShapeType::Lightning => "lightningBolt",
+            ShapeType::Sun => "sun",
+            ShapeType::Moon => "moon",
+            ShapeType::Cloud => "cloud",
+            ShapeType::Brace => "leftBrace",
+            ShapeType::Bracket => "leftBracket",
+            ShapeType::Plus => "mathPlus",
+            ShapeType::Minus => "mathMinus",
+        }
+    }
+
+    /// Get a user-friendly name for the shape
+    pub fn display_name(&self) -> &'static str {
+        match self {
+            ShapeType::Rectangle => "Rectangle",
+            ShapeType::RoundedRectangle => "Rounded Rectangle",
+            ShapeType::Ellipse => "Ellipse",
+            ShapeType::Circle => "Circle",
+            ShapeType::Triangle => "Triangle",
+            ShapeType::RightTriangle => "Right Triangle",
+            ShapeType::Diamond => "Diamond",
+            ShapeType::Pentagon => "Pentagon",
+            ShapeType::Hexagon => "Hexagon",
+            ShapeType::Octagon => "Octagon",
+            ShapeType::RightArrow => "Right Arrow",
+            ShapeType::LeftArrow => "Left Arrow",
+            ShapeType::UpArrow => "Up Arrow",
+            ShapeType::DownArrow => "Down Arrow",
+            ShapeType::LeftRightArrow => "Left-Right Arrow",
+            ShapeType::UpDownArrow => "Up-Down Arrow",
+            ShapeType::BentArrow => "Bent Arrow",
+            ShapeType::UTurnArrow => "U-Turn Arrow",
+            ShapeType::Star4 => "4-Point Star",
+            ShapeType::Star5 => "5-Point Star",
+            ShapeType::Star6 => "6-Point Star",
+            ShapeType::Star8 => "8-Point Star",
+            ShapeType::Ribbon => "Ribbon",
+            ShapeType::Wave => "Wave",
+            ShapeType::WedgeRectCallout => "Rectangle Callout",
+            ShapeType::WedgeEllipseCallout => "Oval Callout",
+            ShapeType::CloudCallout => "Cloud Callout",
+            ShapeType::FlowChartProcess => "Process",
+            ShapeType::FlowChartDecision => "Decision",
+            ShapeType::FlowChartTerminator => "Terminator",
+            ShapeType::FlowChartDocument => "Document",
+            ShapeType::Heart => "Heart",
+            ShapeType::Lightning => "Lightning Bolt",
+            ShapeType::Sun => "Sun",
+            ShapeType::Moon => "Moon",
+            ShapeType::Cloud => "Cloud",
+            ShapeType::Brace => "Brace",
+            ShapeType::Bracket => "Bracket",
+            ShapeType::Plus => "Plus",
+            ShapeType::Minus => "Minus",
         }
     }
 }
@@ -138,7 +267,9 @@ mod tests {
     fn test_shape_type_names() {
         assert_eq!(ShapeType::Rectangle.preset_name(), "rect");
         assert_eq!(ShapeType::Circle.preset_name(), "ellipse");
-        assert_eq!(ShapeType::Arrow.preset_name(), "rightArrow");
+        assert_eq!(ShapeType::RightArrow.preset_name(), "rightArrow");
+        assert_eq!(ShapeType::Star5.preset_name(), "star5");
+        assert_eq!(ShapeType::Heart.preset_name(), "heart");
     }
 
     #[test]

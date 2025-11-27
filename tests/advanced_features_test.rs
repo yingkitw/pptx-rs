@@ -137,12 +137,12 @@ fn test_shape_type_diamond() {
 
 #[test]
 fn test_shape_type_arrow() {
-    assert_eq!(ShapeType::Arrow.preset_name(), "rightArrow");
+    assert_eq!(ShapeType::RightArrow.preset_name(), "rightArrow");
 }
 
 #[test]
 fn test_shape_type_star() {
-    assert_eq!(ShapeType::Star.preset_name(), "star5");
+    assert_eq!(ShapeType::Star5.preset_name(), "star5");
 }
 
 #[test]
@@ -237,7 +237,7 @@ fn test_shape_with_text() {
 
 #[test]
 fn test_shape_complete() {
-    let shape = Shape::new(ShapeType::Arrow, 500000, 500000, 1000000, 500000)
+    let shape = Shape::new(ShapeType::RightArrow, 500000, 500000, 1000000, 500000)
         .with_fill(ShapeFill::new("FF0000"))
         .with_line(ShapeLine::new("000000", 25400))
         .with_text("Next");

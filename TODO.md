@@ -154,25 +154,30 @@
 - [x] Remove slides (remove_slide)
 - [x] Examples: read_presentation.rs, edit_presentation.rs
 
-### 4. Parts Implementation
-- [ ] `parts/presentation.rs` - PresentationPart
-- [ ] `parts/slide.rs` - SlidePart
-- [ ] `parts/image.rs` - ImagePart
-- [ ] `parts/chart.rs` - ChartPart
-- [ ] `parts/coreprops.rs` - CorePropertiesPart
-- [ ] Implement PartFactory
-- [ ] Implement relationships
+### 4. Parts Implementation ✓
+- [x] `parts/base.rs` - Part trait, PartType, ContentType
+- [x] `parts/presentation.rs` - PresentationPart
+- [x] `parts/slide.rs` - SlidePart
+- [x] `parts/image.rs` - ImagePart
+- [x] `parts/chart.rs` - ChartPart
+- [x] `parts/coreprops.rs` - CorePropertiesPart
+- [x] `parts/relationships.rs` - Relationship, Relationships
 
 ## Medium Priority
 
-### 4. Shape Implementation
-- [ ] `shapes/base.rs` - BaseShape
-- [ ] `shapes/autoshape.rs` - AutoShape
-- [ ] `shapes/picture.rs` - Picture
-- [ ] `shapes/placeholder.rs` - Placeholder
-- [ ] `shapes/group.rs` - GroupShape
-- [ ] `shapes/shapetree.rs` - ShapeTree
-- [ ] Implement shape factory
+### 4. Shape Implementation ✓
+- [x] `generator/shapes.rs` - Shape, ShapeType (40+ types), ShapeFill, ShapeLine
+- [x] `generator/shapes_xml.rs` - XML generation for shapes
+- [x] Basic shapes (rect, ellipse, triangle, diamond, etc.)
+- [x] Arrow shapes (8 directions)
+- [x] Stars and banners
+- [x] Callouts
+- [x] Flow chart shapes
+- [x] Fill colors with transparency
+- [x] Line/border styling
+- [x] Text inside shapes
+- [x] Connectors with arrow heads
+- [x] Example: `shapes_demo.rs`
 
 ### 5. Text Implementation
 - [ ] `text/text.rs` - TextFrame, Paragraph, Run

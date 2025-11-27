@@ -269,13 +269,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     
     let shape_slides = vec![
         SlideContent::new("Shape Support")
-            .add_bullet("Rectangle, Circle, Triangle")
-            .add_bullet("Diamond, Arrow, Star, Hexagon")
+            .add_bullet("Rectangle, Circle, Triangle, and more")
             .add_bullet("Solid color fills with transparency")
             .add_bullet("Border/line styling")
-            .add_bullet("Text inside shapes"),
+            .add_shape(rectangle)
+            .add_shape(circle),
     ];
-    println!("   ✓ Created {} shape slides", shape_slides.len());
+    println!("   ✓ Created {} shape slides with embedded shapes", shape_slides.len());
 
     // =========================================================================
     // Combine all slides

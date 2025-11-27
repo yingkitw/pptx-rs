@@ -2,6 +2,7 @@
 
 use super::slide_content::{SlideContent, SlideLayout};
 use super::package_xml::escape_xml;
+use super::shapes_xml::generate_shape_xml;
 
 /// Generate text properties XML with formatting
 fn generate_text_props(
@@ -694,6 +695,13 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
 </p:txBody>
 </p:sp>"#
         );
+    }
+
+    // Render shapes if present
+    // Start shape IDs after title (2) and content (3)
+    for (i, shape) in content.shapes.iter().enumerate() {
+        xml.push('\n');
+        xml.push_str(&generate_shape_xml(shape, (i + 10) as u32));
     }
 
     xml.push_str(
