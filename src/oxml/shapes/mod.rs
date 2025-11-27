@@ -50,7 +50,7 @@ impl Transform2D {
         let mut attrs = Vec::new();
         
         if let Some(rot) = self.rotation {
-            attrs.push(format!(r#"rot="{}""#, rot));
+            attrs.push(format!(r#"rot="{rot}""#));
         }
         if self.flip_h {
             attrs.push(r#"flipH="1""#.to_string());
@@ -61,9 +61,12 @@ impl Transform2D {
 
         let attr_str = if attrs.is_empty() { String::new() } else { format!(" {}", attrs.join(" ")) };
 
+        let x = self.x;
+        let y = self.y;
+        let width = self.width;
+        let height = self.height;
         format!(
-            r#"<a:xfrm{}><a:off x="{}" y="{}"/><a:ext cx="{}" cy="{}"/></a:xfrm>"#,
-            attr_str, self.x, self.y, self.width, self.height
+            r#"<a:xfrm{attr_str}><a:off x="{x}" y="{y}"/><a:ext cx="{width}" cy="{height}"/></a:xfrm>"#
         )
     }
 }
@@ -84,7 +87,8 @@ impl PresetGeometry {
     }
 
     pub fn to_xml(&self) -> String {
-        format!(r#"<a:prstGeom prst="{}"><a:avLst/></a:prstGeom>"#, self.preset)
+        let preset = &self.preset;
+        format!(r#"<a:prstGeom prst="{preset}"><a:avLst/></a:prstGeom>"#)
     }
 }
 
@@ -107,7 +111,8 @@ impl SolidFill {
     }
 
     pub fn to_xml(&self) -> String {
-        format!(r#"<a:solidFill><a:srgbClr val="{}"/></a:solidFill>"#, self.color)
+        let color = &self.color;
+        format!(r#"<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>"#)
     }
 }
 
@@ -147,17 +152,17 @@ impl LineProperties {
         let mut inner = String::new();
 
         if let Some(ref color) = self.color {
-            inner.push_str(&format!(r#"<a:solidFill><a:srgbClr val="{}"/></a:solidFill>"#, color));
+            inner.push_str(&format!(r#"<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>"#));
         }
 
         if let Some(ref dash) = self.dash {
-            inner.push_str(&format!(r#"<a:prstDash val="{}"/>"#, dash));
+            inner.push_str(&format!(r#"<a:prstDash val="{dash}"/>"#));
         }
 
         if inner.is_empty() {
-            format!(r#"<a:ln w="{}"/>"#, width)
+            format!(r#"<a:ln w="{width}"/>"#)
         } else {
-            format!(r#"<a:ln w="{}">{}</a:ln>"#, width, inner)
+            format!(r#"<a:ln w="{width}">{inner}</a:ln>"#)
         }
     }
 }
@@ -246,9 +251,10 @@ impl NonVisualProperties {
     }
 
     pub fn to_xml(&self) -> String {
+        let id = self.id;
+        let name = escape_xml(&self.name);
         format!(
-            r#"<p:nvSpPr><p:cNvPr id="{}" name="{}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>"#,
-            self.id, escape_xml(&self.name)
+            r#"<p:nvSpPr><p:cNvPr id="{id}" name="{name}"/><p:cNvSpPr txBox="1"/><p:nvPr/></p:nvSpPr>"#
         )
     }
 }

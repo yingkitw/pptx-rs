@@ -39,9 +39,9 @@ impl Color {
 
     pub fn to_xml(&self) -> String {
         match self {
-            Color::Rgb(hex) => format!(r#"<a:srgbClr val="{}"/>"#, hex),
-            Color::Scheme(name) => format!(r#"<a:schemeClr val="{}"/>"#, name),
-            Color::System(name) => format!(r#"<a:sysClr val="{}"/>"#, name),
+            Color::Rgb(hex) => format!(r#"<a:srgbClr val="{hex}"/>"#),
+            Color::Scheme(name) => format!(r#"<a:schemeClr val="{name}"/>"#),
+            Color::System(name) => format!(r#"<a:sysClr val="{name}"/>"#),
         }
     }
 }
@@ -66,9 +66,12 @@ impl EffectExtent {
     }
 
     pub fn to_xml(&self) -> String {
+        let left = self.left;
+        let top = self.top;
+        let right = self.right;
+        let bottom = self.bottom;
         format!(
-            r#"<a:effectExtent l="{}" t="{}" r="{}" b="{}"/>"#,
-            self.left, self.top, self.right, self.bottom
+            r#"<a:effectExtent l="{left}" t="{top}" r="{right}" b="{bottom}"/>"#
         )
     }
 }
@@ -127,13 +130,13 @@ impl Outline {
         }
 
         if let Some(ref dash) = self.dash {
-            inner.push_str(&format!(r#"<a:prstDash val="{}"/>"#, dash));
+            inner.push_str(&format!(r#"<a:prstDash val="{dash}"/>"#));
         }
 
         if inner.is_empty() {
-            format!(r#"<a:ln w="{}"/>"#, width)
+            format!(r#"<a:ln w="{width}"/>"#)
         } else {
-            format!(r#"<a:ln w="{}">{}</a:ln>"#, width, inner)
+            format!(r#"<a:ln w="{width}">{inner}</a:ln>"#)
         }
     }
 }
@@ -192,7 +195,7 @@ impl GradientFill {
         xml.push_str("</a:gsLst>");
 
         if let Some(angle) = self.angle {
-            xml.push_str(&format!(r#"<a:lin ang="{}" scaled="1"/>"#, angle));
+            xml.push_str(&format!(r#"<a:lin ang="{angle}" scaled="1"/>"#));
         }
 
         xml.push_str("</a:gradFill>");

@@ -34,8 +34,7 @@ pub fn generate_text_props(
     if let Some(hex_color) = color {
         let clean_color = hex_color.trim_start_matches('#').to_uppercase();
         props.push_str(&format!(
-            r#"<a:solidFill><a:srgbClr val="{}"/></a:solidFill>"#,
-            clean_color
+            r#"<a:solidFill><a:srgbClr val="{clean_color}"/></a:solidFill>"#
         ));
     }
 
@@ -70,8 +69,7 @@ impl SlideXmlBuilder {
         self.writer.raw("<p:spTree>\n");
         self.writer.raw("<p:nvGrpSpPr><p:cNvPr id=\"1\" name=\"\"/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>\n");
         self.writer.raw(&format!(
-            "<p:grpSpPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"{}\" cy=\"{}\"/><a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"{}\" cy=\"{}\"/></a:xfrm></p:grpSpPr>\n",
-            SLIDE_WIDTH, SLIDE_HEIGHT, SLIDE_WIDTH, SLIDE_HEIGHT
+            "<p:grpSpPr><a:xfrm><a:off x=\"0\" y=\"0\"/><a:ext cx=\"{SLIDE_WIDTH}\" cy=\"{SLIDE_HEIGHT}\"/><a:chOff x=\"0\" y=\"0\"/><a:chExt cx=\"{SLIDE_WIDTH}\" cy=\"{SLIDE_HEIGHT}\"/></a:xfrm></p:grpSpPr>\n"
         ));
         self
     }

@@ -6,33 +6,31 @@ use crate::generator::tables::{Table, TableRow, TableCell};
 
 /// Generate table XML for a slide
 pub fn generate_table_xml(table: &Table, shape_id: usize) -> String {
+    let x = table.x;
+    let y = table.y;
+    let width = table.width();
+    let height = table.height();
     let mut xml = format!(
         r#"<p:graphicFrame>
 <p:nvGraphicFramePr>
-<p:cNvPr id="{}" name="Table {}"/>
+<p:cNvPr id="{shape_id}" name="Table {shape_id}"/>
 <p:cNvGraphicFramePr/>
 <p:nvPr/>
 </p:nvGraphicFramePr>
 <p:xfrm>
-<a:off x="{}" y="{}"/>
-<a:ext cx="{}" cy="{}"/>
+<a:off x="{x}" y="{y}"/>
+<a:ext cx="{width}" cy="{height}"/>
 </p:xfrm>
 <a:graphic>
 <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table">
 <a:tbl>
 <a:tblPr firstRow="1" bandHVals="1"/>
-<a:tblGrid>"#,
-        shape_id,
-        shape_id,
-        table.x,
-        table.y,
-        table.width(),
-        table.height()
+<a:tblGrid>"#
     );
 
     // Add column widths
     for width in &table.column_widths {
-        xml.push_str(&format!(r#"<a:gridCol w="{}"/>"#, width));
+        xml.push_str(&format!(r#"<a:gridCol w="{width}"/>"#));
     }
 
     xml.push_str("</a:tblGrid>");
@@ -56,7 +54,7 @@ pub fn generate_table_xml(table: &Table, shape_id: usize) -> String {
 fn generate_row_xml(row: &TableRow) -> String {
     let height = row.height.unwrap_or(400000);
     
-    let mut xml = format!(r#"<a:tr h="{}">"#, height);
+    let mut xml = format!(r#"<a:tr h="{height}">"#);
 
     for cell in &row.cells {
         xml.push_str(&generate_cell_xml(cell));
@@ -76,8 +74,7 @@ fn generate_cell_xml(cell: &TableCell) -> String {
     // Background color if specified
     if let Some(color) = &cell.background_color {
         xml.push_str(&format!(
-            r#"<a:solidFill><a:srgbClr val="{}"/></a:solidFill>"#,
-            color
+            r#"<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>"#
         ));
     } else {
         // Default light gray background for better visibility
@@ -92,12 +89,12 @@ fn generate_cell_xml(cell: &TableCell) -> String {
     // Text properties
     let bold = if cell.bold { "1" } else { "0" };
     xml.push_str(&format!(
-        r#"<a:rPr lang="en-US" sz="2000" b="{}"/>"#,
-        bold
+        r#"<a:rPr lang="en-US" sz="2000" b="{bold}"/>"#
     ));
 
     // Cell text
-    xml.push_str(&format!(r#"<a:t>{}</a:t>"#, escape_xml(&cell.text)));
+    let text = escape_xml(&cell.text);
+    xml.push_str(&format!(r#"<a:t>{text}</a:t>"#));
 
     xml.push_str("</a:r></a:p></a:txBody></a:tc>");
 

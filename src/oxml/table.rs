@@ -29,19 +29,19 @@ impl TableCellProperties {
         let mut attrs = Vec::new();
         
         if let Some(l) = self.margin_left {
-            attrs.push(format!(r#"marL="{}""#, l));
+            attrs.push(format!(r#"marL="{l}""#));
         }
         if let Some(r) = self.margin_right {
-            attrs.push(format!(r#"marR="{}""#, r));
+            attrs.push(format!(r#"marR="{r}""#));
         }
         if let Some(t) = self.margin_top {
-            attrs.push(format!(r#"marT="{}""#, t));
+            attrs.push(format!(r#"marT="{t}""#));
         }
         if let Some(b) = self.margin_bottom {
-            attrs.push(format!(r#"marB="{}""#, b));
+            attrs.push(format!(r#"marB="{b}""#));
         }
         if let Some(ref anchor) = self.anchor {
-            attrs.push(format!(r#"anchor="{}""#, anchor));
+            attrs.push(format!(r#"anchor="{anchor}""#));
         }
 
         if attrs.is_empty() {
@@ -89,10 +89,12 @@ impl TableCell {
     pub fn to_xml(&self) -> String {
         let mut attrs = Vec::new();
         if self.row_span > 1 {
-            attrs.push(format!(r#"rowSpan="{}""#, self.row_span));
+            let row_span = self.row_span;
+            attrs.push(format!(r#"rowSpan="{row_span}""#));
         }
         if self.col_span > 1 {
-            attrs.push(format!(r#"gridSpan="{}""#, self.col_span));
+            let col_span = self.col_span;
+            attrs.push(format!(r#"gridSpan="{col_span}""#));
         }
 
         let attr_str = if attrs.is_empty() { String::new() } else { format!(" {}", attrs.join(" ")) };
@@ -132,7 +134,8 @@ impl TableRow {
     }
 
     pub fn to_xml(&self) -> String {
-        let mut xml = format!(r#"<a:tr h="{}">"#, self.height);
+        let height = self.height;
+        let mut xml = format!(r#"<a:tr h="{height}">"#);
         for cell in &self.cells {
             xml.push_str(&cell.to_xml());
         }
@@ -164,7 +167,8 @@ impl GridColumn {
     }
 
     pub fn to_xml(&self) -> String {
-        format!(r#"<a:gridCol w="{}"/>"#, self.width)
+        let width = self.width;
+        format!(r#"<a:gridCol w="{width}"/>"#)
     }
 }
 

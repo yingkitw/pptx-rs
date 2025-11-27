@@ -35,25 +35,25 @@ impl BodyProperties {
         let mut attrs = Vec::new();
         
         if let Some(ref wrap) = self.wrap {
-            attrs.push(format!(r#"wrap="{}""#, wrap));
+            attrs.push(format!(r#"wrap="{wrap}""#));
         }
         if let Some(ref anchor) = self.anchor {
-            attrs.push(format!(r#"anchor="{}""#, anchor));
+            attrs.push(format!(r#"anchor="{anchor}""#));
         }
         if self.rtl_col {
             attrs.push(r#"rtlCol="1""#.to_string());
         }
         if let Some(l) = self.left_inset {
-            attrs.push(format!(r#"lIns="{}""#, l));
+            attrs.push(format!(r#"lIns="{l}""#));
         }
         if let Some(r) = self.right_inset {
-            attrs.push(format!(r#"rIns="{}""#, r));
+            attrs.push(format!(r#"rIns="{r}""#));
         }
         if let Some(t) = self.top_inset {
-            attrs.push(format!(r#"tIns="{}""#, t));
+            attrs.push(format!(r#"tIns="{t}""#));
         }
         if let Some(b) = self.bottom_inset {
-            attrs.push(format!(r#"bIns="{}""#, b));
+            attrs.push(format!(r#"bIns="{b}""#));
         }
 
         if attrs.is_empty() {
@@ -89,16 +89,17 @@ impl ParagraphProperties {
         let mut attrs = Vec::new();
         
         if let Some(ref align) = self.align {
-            attrs.push(format!(r#"algn="{}""#, align));
+            attrs.push(format!(r#"algn="{align}""#));
         }
         if self.level > 0 {
-            attrs.push(format!(r#"lvl="{}""#, self.level));
+            let level = self.level;
+            attrs.push(format!(r#"lvl="{level}""#));
         }
         if let Some(indent) = self.indent {
-            attrs.push(format!(r#"indent="{}""#, indent));
+            attrs.push(format!(r#"indent="{indent}""#));
         }
         if let Some(mar_l) = self.margin_left {
-            attrs.push(format!(r#"marL="{}""#, mar_l));
+            attrs.push(format!(r#"marL="{mar_l}""#));
         }
         if self.rtl {
             attrs.push(r#"rtl="1""#.to_string());
@@ -157,24 +158,26 @@ impl RunProperties {
         let mut attrs = vec![r#"lang="en-US""#.to_string()];
         
         if let Some(sz) = self.size {
-            attrs.push(format!(r#"sz="{}""#, sz));
+            attrs.push(format!(r#"sz="{sz}""#));
         }
-        attrs.push(format!(r#"b="{}""#, if self.bold { "1" } else { "0" }));
-        attrs.push(format!(r#"i="{}""#, if self.italic { "1" } else { "0" }));
+        let b = if self.bold { "1" } else { "0" };
+        let i = if self.italic { "1" } else { "0" };
+        attrs.push(format!(r#"b="{b}""#));
+        attrs.push(format!(r#"i="{i}""#));
         
         if let Some(ref u) = self.underline {
-            attrs.push(format!(r#"u="{}""#, u));
+            attrs.push(format!(r#"u="{u}""#));
         }
         if let Some(ref strike) = self.strike {
-            attrs.push(format!(r#"strike="{}""#, strike));
+            attrs.push(format!(r#"strike="{strike}""#));
         }
 
         let mut inner = String::new();
         if let Some(ref color) = self.color {
-            inner.push_str(&format!(r#"<a:solidFill><a:srgbClr val="{}"/></a:solidFill>"#, color));
+            inner.push_str(&format!(r#"<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>"#));
         }
         if let Some(ref font) = self.font_family {
-            inner.push_str(&format!(r#"<a:latin typeface="{}"/>"#, font));
+            inner.push_str(&format!(r#"<a:latin typeface="{font}"/>"#));
         }
 
         if inner.is_empty() {

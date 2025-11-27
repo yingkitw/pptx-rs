@@ -19,7 +19,7 @@ impl CreateCommand {
         if let Some(parent) = PathBuf::from(output).parent() {
             if !parent.as_os_str().is_empty() {
                 fs::create_dir_all(parent)
-                    .map_err(|e| format!("Failed to create directory: {}", e))?;
+                    .map_err(|e| format!("Failed to create directory: {e}"))?;
             }
         }
 
@@ -27,11 +27,11 @@ impl CreateCommand {
 
         // Generate proper PPTX file
         let pptx_data = generator::create_pptx(title, slides)
-            .map_err(|e| format!("Failed to generate PPTX: {}", e))?;
+            .map_err(|e| format!("Failed to generate PPTX: {e}"))?;
 
         // Write to file
         fs::write(output, pptx_data)
-            .map_err(|e| format!("Failed to write file: {}", e))?;
+            .map_err(|e| format!("Failed to write file: {e}"))?;
 
         Ok(())
     }
@@ -45,7 +45,7 @@ impl FromMarkdownCommand {
     ) -> Result<(), String> {
         // Read markdown file
         let md_content = fs::read_to_string(input)
-            .map_err(|e| format!("Failed to read markdown file: {}", e))?;
+            .map_err(|e| format!("Failed to read markdown file: {e}"))?;
 
         // Parse markdown into slides
         let slides = Self::parse_markdown(&md_content)?;
@@ -58,7 +58,7 @@ impl FromMarkdownCommand {
         if let Some(parent) = PathBuf::from(output).parent() {
             if !parent.as_os_str().is_empty() {
                 fs::create_dir_all(parent)
-                    .map_err(|e| format!("Failed to create directory: {}", e))?;
+                    .map_err(|e| format!("Failed to create directory: {e}"))?;
             }
         }
 
@@ -66,11 +66,11 @@ impl FromMarkdownCommand {
 
         // Generate PPTX with content
         let pptx_data = generator::create_pptx_with_content(title, slides)
-            .map_err(|e| format!("Failed to generate PPTX: {}", e))?;
+            .map_err(|e| format!("Failed to generate PPTX: {e}"))?;
 
         // Write to file
         fs::write(output, pptx_data)
-            .map_err(|e| format!("Failed to write file: {}", e))?;
+            .map_err(|e| format!("Failed to write file: {e}"))?;
 
         Ok(())
     }
@@ -125,22 +125,23 @@ impl FromMarkdownCommand {
 impl InfoCommand {
     pub fn execute(file: &str) -> Result<(), String> {
         let metadata = fs::metadata(file)
-            .map_err(|e| format!("File not found: {}", e))?;
+            .map_err(|e| format!("File not found: {e}"))?;
 
         let size = metadata.len();
         let modified = metadata
             .modified()
             .ok()
             .and_then(|t| t.elapsed().ok())
-            .map(|d| format!("{:?} ago", d))
+            .map(|d| format!("{d:?} ago"))
             .unwrap_or_else(|| "unknown".to_string());
 
         println!("File Information");
         println!("================");
-        println!("Path:     {}", file);
-        println!("Size:     {} bytes", size);
-        println!("Modified: {}", modified);
-        println!("Is file:  {}", metadata.is_file());
+        println!("Path:     {file}");
+        println!("Size:     {size} bytes");
+        println!("Modified: {modified}");
+        let is_file = metadata.is_file();
+        println!("Is file:  {is_file}");
 
         // Try to read and parse as XML
         if let Ok(content) = fs::read_to_string(file) {
@@ -150,14 +151,14 @@ impl InfoCommand {
                 if let Some(title_start) = content.find("<title>") {
                     if let Some(title_end) = content[title_start + 7..].find("</title>") {
                         let title = &content[title_start + 7..title_start + 7 + title_end];
-                        println!("Title: {}", title);
+                        println!("Title: {title}");
                     }
                 }
                 if let Some(slides_start) = content.find("count=\"") {
                     let search_from = slides_start + 7;
                     if let Some(slides_end) = content[search_from..].find("\"") {
                         let count_str = &content[search_from..search_from + slides_end];
-                        println!("Slides: {}", count_str);
+                        println!("Slides: {count_str}");
                     }
                 }
             }

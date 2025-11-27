@@ -304,7 +304,20 @@
 ## Code Quality
 
 - [x] Fixed div_ceil clippy warnings
-- [ ] Fix format string style warnings (121 remaining - cosmetic)
+- [x] Fix format string style warnings (reduced from 122 to 38 - 69% reduction)
+  - [x] Fixed `generator/props_xml.rs`
+  - [x] Fixed `generator/slide_xml.rs`
+  - [x] Fixed `generator/layouts/common.rs`
+  - [x] Fixed `generator/tables_xml.rs`
+  - [x] Fixed `oxml/editor.rs`
+  - [x] Fixed `oxml/text.rs` (partial)
+  - [x] Fixed `oxml/table.rs`
+  - [x] Fixed `oxml/shapes/mod.rs`
+  - [x] Fixed `oxml/dml/mod.rs`
+  - [x] Fixed `oxml/presentation.rs`
+  - [x] Fixed `cli/commands.rs`
+  - [x] Fixed `bin/pptx-cli.rs`
+  - [ ] Remaining: ~38 warnings in other files (cosmetic)
 - [ ] Improve error messages
 - [ ] Add more comprehensive error handling
 - [ ] Review and refactor large functions

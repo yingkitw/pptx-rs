@@ -15,11 +15,14 @@ fn main() {
                 create_args.template.as_deref(),
             ) {
                 Ok(_) => {
-                    println!("✓ Created presentation: {}", create_args.output);
-                    println!("  Title: {}", create_args.title.as_deref().unwrap_or("Presentation"));
-                    println!("  Slides: {}", create_args.slides);
+                    let output = &create_args.output;
+                    println!("✓ Created presentation: {output}");
+                    let title = create_args.title.as_deref().unwrap_or("Presentation");
+                    println!("  Title: {title}");
+                    let slides = create_args.slides;
+                    println!("  Slides: {slides}");
                 }
-                Err(e) => eprintln!("✗ Error: {}", e),
+                Err(e) => eprintln!("✗ Error: {e}"),
             }
         }
         Ok(Command::FromMarkdown(md_args)) => {
@@ -29,22 +32,25 @@ fn main() {
                 md_args.title.as_deref(),
             ) {
                 Ok(_) => {
-                    println!("✓ Created presentation from markdown: {}", md_args.output);
-                    println!("  Input: {}", md_args.input);
-                    println!("  Title: {}", md_args.title.as_deref().unwrap_or("Presentation from Markdown"));
+                    let output = &md_args.output;
+                    println!("✓ Created presentation from markdown: {output}");
+                    let input = &md_args.input;
+                    println!("  Input: {input}");
+                    let title = md_args.title.as_deref().unwrap_or("Presentation from Markdown");
+                    println!("  Title: {title}");
                 }
-                Err(e) => eprintln!("✗ Error: {}", e),
+                Err(e) => eprintln!("✗ Error: {e}"),
             }
         }
         Ok(Command::Info(info_args)) => {
             match InfoCommand::execute(&info_args.file) {
                 Ok(_) => {}
-                Err(e) => eprintln!("✗ Error: {}", e),
+                Err(e) => eprintln!("✗ Error: {e}"),
             }
         }
         Ok(Command::Help) => print_help(),
         Err(e) => {
-            eprintln!("✗ Error: {}", e);
+            eprintln!("✗ Error: {e}");
             print_help();
         }
     }

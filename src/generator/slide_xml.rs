@@ -28,8 +28,7 @@ fn generate_text_props(
     if let Some(hex_color) = color {
         let clean_color = hex_color.trim_start_matches('#').to_uppercase();
         props.push_str(&format!(
-            r#"<a:solidFill><a:srgbClr val="{}"/></a:solidFill>"#,
-            clean_color
+            r#"<a:solidFill><a:srgbClr val="{clean_color}"/></a:solidFill>"#
         ));
     }
 
@@ -80,7 +79,7 @@ pub fn create_slide_xml(slide_num: usize, title: &str) -> String {
 <a:p>
 <a:r>
 <a:rPr lang="en-US" smtClean="0"/>
-<a:t>{}</a:t>
+<a:t>{slide_title}</a:t>
 </a:r>
 <a:endParaRPr lang="en-US"/>
 </a:p>
@@ -91,8 +90,7 @@ pub fn create_slide_xml(slide_num: usize, title: &str) -> String {
 <p:clrMapOvr>
 <a:masterClrMapping/>
 </p:clrMapOvr>
-</p:sld>"#,
-        slide_title
+</p:sld>"#
     )
 }
 
@@ -148,6 +146,7 @@ fn create_title_only_slide(content: &SlideContent) -> String {
         content.title_underline,
         content.title_color.as_deref(),
     );
+    let title_text = escape_xml(&content.title);
 
     format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -192,8 +191,8 @@ fn create_title_only_slide(content: &SlideContent) -> String {
 <a:p>
 <a:pPr algn="l"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{title_props}
+<a:t>{title_text}</a:t>
 </a:r>
 </a:p>
 </p:txBody>
@@ -203,8 +202,7 @@ fn create_title_only_slide(content: &SlideContent) -> String {
 <p:clrMapOvr>
 <a:masterClrMapping/>
 </p:clrMapOvr>
-</p:sld>"#,
-        title_props, escape_xml(&content.title)
+</p:sld>"#
     )
 }
 
@@ -217,6 +215,7 @@ fn create_centered_title_slide(content: &SlideContent) -> String {
         content.title_underline,
         content.title_color.as_deref(),
     );
+    let title_text = escape_xml(&content.title);
 
     format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -261,8 +260,8 @@ fn create_centered_title_slide(content: &SlideContent) -> String {
 <a:p>
 <a:pPr algn="ctr"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{title_props}
+<a:t>{title_text}</a:t>
 </a:r>
 </a:p>
 </p:txBody>
@@ -272,8 +271,7 @@ fn create_centered_title_slide(content: &SlideContent) -> String {
 <p:clrMapOvr>
 <a:masterClrMapping/>
 </p:clrMapOvr>
-</p:sld>"#,
-        title_props, escape_xml(&content.title)
+</p:sld>"#
     )
 }
 
@@ -288,6 +286,7 @@ fn create_title_and_big_content_slide(content: &SlideContent) -> String {
         content.title_underline,
         content.title_color.as_deref(),
     );
+    let title_text = escape_xml(&content.title);
 
     let mut xml = format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -332,13 +331,12 @@ fn create_title_and_big_content_slide(content: &SlideContent) -> String {
 <a:p>
 <a:pPr algn="l"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{title_props}
+<a:t>{title_text}</a:t>
 </a:r>
 </a:p>
 </p:txBody>
-</p:sp>"#,
-        title_props, escape_xml(&content.title)
+</p:sp>"#
     );
 
     if !content.content.is_empty() {
@@ -372,16 +370,16 @@ fn create_title_and_big_content_slide(content: &SlideContent) -> String {
         );
 
         for bullet in content.content.iter() {
+            let bullet_text = escape_xml(bullet);
             xml.push_str(&format!(
                 r#"
 <a:p>
 <a:pPr lvl="0"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{content_props}
+<a:t>{bullet_text}</a:t>
 </a:r>
-</a:p>"#,
-                content_props, escape_xml(bullet)
+</a:p>"#
             ));
         }
 
@@ -416,6 +414,7 @@ fn create_two_column_slide(content: &SlideContent) -> String {
         content.title_underline,
         content.title_color.as_deref(),
     );
+    let title_text = escape_xml(&content.title);
 
     let mut xml = format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -460,13 +459,12 @@ fn create_two_column_slide(content: &SlideContent) -> String {
 <a:p>
 <a:pPr algn="l"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{title_props}
+<a:t>{title_text}</a:t>
 </a:r>
 </a:p>
 </p:txBody>
-</p:sp>"#,
-        title_props, escape_xml(&content.title)
+</p:sp>"#
     );
 
     if !content.content.is_empty() {
@@ -505,16 +503,16 @@ fn create_two_column_slide(content: &SlideContent) -> String {
         );
 
         for bullet in left_content.iter() {
+            let bullet_text = escape_xml(bullet);
             xml.push_str(&format!(
                 r#"
 <a:p>
 <a:pPr lvl="0"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{content_props}
+<a:t>{bullet_text}</a:t>
 </a:r>
-</a:p>"#,
-                content_props, escape_xml(bullet)
+</a:p>"#
             ));
         }
 
@@ -548,16 +546,16 @@ fn create_two_column_slide(content: &SlideContent) -> String {
             );
 
             for bullet in right_content.iter() {
+                let bullet_text = escape_xml(bullet);
                 xml.push_str(&format!(
                     r#"
 <a:p>
 <a:pPr lvl="0"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{content_props}
+<a:t>{bullet_text}</a:t>
 </a:r>
-</a:p>"#,
-                    content_props, escape_xml(bullet)
+</a:p>"#
                 ));
             }
 
@@ -593,6 +591,7 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
         content.title_underline,
         content.title_color.as_deref(),
     );
+    let title_text = escape_xml(&content.title);
 
     let mut xml = format!(
         r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -637,13 +636,12 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
 <a:p>
 <a:pPr algn="l"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{title_props}
+<a:t>{title_text}</a:t>
 </a:r>
 </a:p>
 </p:txBody>
-</p:sp>"#,
-        title_props, escape_xml(&content.title)
+</p:sp>"#
     );
 
     // Render table if present
@@ -682,16 +680,16 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
         );
 
         for bullet in content.content.iter() {
+            let bullet_text = escape_xml(bullet);
             xml.push_str(&format!(
                 r#"
 <a:p>
 <a:pPr lvl="0"/>
 <a:r>
-{}
-<a:t>{}</a:t>
+{content_props}
+<a:t>{bullet_text}</a:t>
 </a:r>
-</a:p>"#,
-                content_props, escape_xml(bullet)
+</a:p>"#
             ));
         }
 
@@ -716,17 +714,23 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
     for (i, image) in content.images.iter().enumerate() {
         xml.push('\n');
         // Create a placeholder rectangle showing image location
+        let id = image_start_id + i;
+        let filename = &image.filename;
+        let x = image.x;
+        let y = image.y;
+        let width = image.width;
+        let height = image.height;
         xml.push_str(&format!(
             r#"<p:sp>
 <p:nvSpPr>
-<p:cNvPr id="{}" name="Image Placeholder: {}"/>
+<p:cNvPr id="{id}" name="Image Placeholder: {filename}"/>
 <p:cNvSpPr/>
 <p:nvPr/>
 </p:nvSpPr>
 <p:spPr>
 <a:xfrm>
-<a:off x="{}" y="{}"/>
-<a:ext cx="{}" cy="{}"/>
+<a:off x="{x}" y="{y}"/>
+<a:ext cx="{width}" cy="{height}"/>
 </a:xfrm>
 <a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
 <a:solidFill><a:srgbClr val="E0E0E0"/></a:solidFill>
@@ -739,18 +743,11 @@ fn create_title_and_content_slide(content: &SlideContent) -> String {
 <a:pPr algn="ctr"/>
 <a:r>
 <a:rPr lang="en-US" sz="1400"/>
-<a:t>📷 {}</a:t>
+<a:t>📷 {filename}</a:t>
 </a:r>
 </a:p>
 </p:txBody>
-</p:sp>"#,
-            image_start_id + i,
-            image.filename,
-            image.x,
-            image.y,
-            image.width,
-            image.height,
-            image.filename
+</p:sp>"#
         ));
     }
 

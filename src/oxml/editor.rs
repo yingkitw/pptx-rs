@@ -45,9 +45,10 @@ impl PresentationEditor {
 
     /// Get a parsed slide by index (0-based)
     pub fn get_slide(&self, index: usize) -> Result<ParsedSlide, PptxError> {
-        let path = format!("ppt/slides/slide{}.xml", index + 1);
+        let slide_num = index + 1;
+        let path = format!("ppt/slides/slide{slide_num}.xml");
         let xml = self.package.get_part(&path)
-            .ok_or_else(|| PptxError::NotFound(format!("Slide {} not found", index)))?;
+            .ok_or_else(|| PptxError::NotFound(format!("Slide {index} not found")))?;
         
         let xml_str = String::from_utf8_lossy(xml);
         SlideParser::parse(&xml_str)
@@ -62,11 +63,11 @@ impl PresentationEditor {
         let slide_rels_xml = create_slide_rels_xml();
         
         // Add slide file
-        let slide_path = format!("ppt/slides/slide{}.xml", new_index);
+        let slide_path = format!("ppt/slides/slide{new_index}.xml");
         self.package.add_part(slide_path, slide_xml.into_bytes());
         
         // Add slide relationships
-        let rels_path = format!("ppt/slides/_rels/slide{}.xml.rels", new_index);
+        let rels_path = format!("ppt/slides/_rels/slide{new_index}.xml.rels");
         self.package.add_part(rels_path, slide_rels_xml.into_bytes());
         
         // Update presentation.xml to include new slide
@@ -85,12 +86,12 @@ impl PresentationEditor {
     /// Update slide content at index
     pub fn update_slide(&mut self, index: usize, content: SlideContent) -> Result<(), PptxError> {
         if index >= self.slide_count {
-            return Err(PptxError::NotFound(format!("Slide {} not found", index)));
+            return Err(PptxError::NotFound(format!("Slide {index} not found")));
         }
         
         let slide_num = index + 1;
         let slide_xml = create_slide_xml_with_content(slide_num, &content);
-        let slide_path = format!("ppt/slides/slide{}.xml", slide_num);
+        let slide_path = format!("ppt/slides/slide{slide_num}.xml");
         
         self.package.add_part(slide_path, slide_xml.into_bytes());
         Ok(())
@@ -99,17 +100,17 @@ impl PresentationEditor {
     /// Remove a slide by index
     pub fn remove_slide(&mut self, index: usize) -> Result<(), PptxError> {
         if index >= self.slide_count {
-            return Err(PptxError::NotFound(format!("Slide {} not found", index)));
+            return Err(PptxError::NotFound(format!("Slide {index} not found")));
         }
         
         let slide_num = index + 1;
         
         // Remove slide file
-        let slide_path = format!("ppt/slides/slide{}.xml", slide_num);
+        let slide_path = format!("ppt/slides/slide{slide_num}.xml");
         self.package.remove_part(&slide_path);
         
         // Remove slide relationships
-        let rels_path = format!("ppt/slides/_rels/slide{}.xml.rels", slide_num);
+        let rels_path = format!("ppt/slides/_rels/slide{slide_num}.xml.rels");
         self.package.remove_part(&rels_path);
         
         // Renumber remaining slides
@@ -167,8 +168,7 @@ impl PresentationEditor {
         let r_id = slide_num + 2; // rId1=master, rId2=theme, rId3+=slides
         
         let new_slide_ref = format!(
-            "\n<p:sldId id=\"{}\" r:id=\"rId{}\"/>",
-            slide_id, r_id
+            "\n<p:sldId id=\"{slide_id}\" r:id=\"rId{r_id}\"/>"
         );
         
         if let Some(pos) = xml.find("</p:sldIdLst>") {
@@ -192,8 +192,7 @@ impl PresentationEditor {
     fn add_slide_to_presentation_rels(&self, xml: &str, slide_num: usize) -> Result<String, PptxError> {
         let r_id = slide_num + 2;
         let new_rel = format!(
-            "\n    <Relationship Id=\"rId{}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide\" Target=\"slides/slide{}.xml\"/>",
-            r_id, slide_num
+            "\n    <Relationship Id=\"rId{r_id}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide\" Target=\"slides/slide{slide_num}.xml\"/>"
         );
         
         if let Some(pos) = xml.find("</Relationships>") {
@@ -215,8 +214,7 @@ impl PresentationEditor {
 
     fn add_slide_to_content_types(&self, xml: &str, slide_num: usize) -> Result<String, PptxError> {
         let new_override = format!(
-            "\n<Override PartName=\"/ppt/slides/slide{}.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.presentationml.slide+xml\"/>",
-            slide_num
+            "\n<Override PartName=\"/ppt/slides/slide{slide_num}.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.presentationml.slide+xml\"/>"
         );
         
         if let Some(pos) = xml.find("</Types>") {
@@ -230,16 +228,16 @@ impl PresentationEditor {
 
     fn renumber_slide(&mut self, old_num: usize, new_num: usize) -> Result<(), PptxError> {
         // Move slide file
-        let old_path = format!("ppt/slides/slide{}.xml", old_num);
-        let new_path = format!("ppt/slides/slide{}.xml", new_num);
+        let old_path = format!("ppt/slides/slide{old_num}.xml");
+        let new_path = format!("ppt/slides/slide{new_num}.xml");
         
         if let Some(content) = self.package.remove_part(&old_path) {
             self.package.add_part(new_path, content);
         }
         
         // Move slide rels
-        let old_rels = format!("ppt/slides/_rels/slide{}.xml.rels", old_num);
-        let new_rels = format!("ppt/slides/_rels/slide{}.xml.rels", new_num);
+        let old_rels = format!("ppt/slides/_rels/slide{old_num}.xml.rels");
+        let new_rels = format!("ppt/slides/_rels/slide{new_num}.xml.rels");
         
         if let Some(content) = self.package.remove_part(&old_rels) {
             self.package.add_part(new_rels, content);
@@ -254,8 +252,7 @@ impl PresentationEditor {
             let slide_id = 256 + i;
             let r_id = i + 2;
             slide_refs.push_str(&format!(
-                "\n<p:sldId id=\"{}\" r:id=\"rId{}\"/>",
-                slide_id, r_id
+                "\n<p:sldId id=\"{slide_id}\" r:id=\"rId{r_id}\"/>"
             ));
         }
         
@@ -265,12 +262,11 @@ impl PresentationEditor {
 <p:sldMasterIdLst>
 <p:sldMasterId id="2147483648" r:id="rId1"/>
 </p:sldMasterIdLst>
-<p:sldIdLst>{}
+<p:sldIdLst>{slide_refs}
 </p:sldIdLst>
 <p:sldSz cx="9144000" cy="6858000" type="screen4x3"/>
 <p:notesSz cx="6858000" cy="9144000"/>
-</p:presentation>"#,
-            slide_refs
+</p:presentation>"#
         );
         
         self.package.add_part("ppt/presentation.xml".to_string(), xml.into_bytes());
@@ -282,8 +278,7 @@ impl PresentationEditor {
         for i in 1..=self.slide_count {
             let r_id = i + 2;
             slide_rels.push_str(&format!(
-                "\n    <Relationship Id=\"rId{}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide\" Target=\"slides/slide{}.xml\"/>",
-                r_id, i
+                "\n    <Relationship Id=\"rId{r_id}\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide\" Target=\"slides/slide{i}.xml\"/>"
             ));
         }
         
@@ -291,9 +286,8 @@ impl PresentationEditor {
             r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
     <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideMaster" Target="slideMasters/slideMaster1.xml"/>
-    <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>{}
-</Relationships>"#,
-            slide_rels
+    <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="theme/theme1.xml"/>{slide_rels}
+</Relationships>"#
         );
         
         self.package.add_part("ppt/_rels/presentation.xml.rels".to_string(), xml.into_bytes());
@@ -304,8 +298,7 @@ impl PresentationEditor {
         let mut slide_overrides = String::new();
         for i in 1..=self.slide_count {
             slide_overrides.push_str(&format!(
-                "\n<Override PartName=\"/ppt/slides/slide{}.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.presentationml.slide+xml\"/>",
-                i
+                "\n<Override PartName=\"/ppt/slides/slide{i}.xml\" ContentType=\"application/vnd.openxmlformats-officedocument.presentationml.slide+xml\"/>"
             ));
         }
         
@@ -314,14 +307,13 @@ impl PresentationEditor {
 <Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
 <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
 <Default Extension="xml" ContentType="application/xml"/>
-<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>{}
+<Override PartName="/ppt/presentation.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.presentation.main+xml"/>{slide_overrides}
 <Override PartName="/ppt/slideLayouts/slideLayout1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideLayout+xml"/>
 <Override PartName="/ppt/slideMasters/slideMaster1.xml" ContentType="application/vnd.openxmlformats-officedocument.presentationml.slideMaster+xml"/>
 <Override PartName="/ppt/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/>
 <Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
 <Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/>
-</Types>"#,
-            slide_overrides
+</Types>"#
         );
         
         self.package.add_part("[Content_Types].xml".to_string(), xml.into_bytes());

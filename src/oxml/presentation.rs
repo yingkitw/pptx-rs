@@ -72,10 +72,10 @@ impl PresentationReader {
     /// Get slide by index (0-based)
     pub fn get_slide(&self, index: usize) -> Result<ParsedSlide, PptxError> {
         let path = self.slide_paths.get(index)
-            .ok_or_else(|| PptxError::NotFound(format!("Slide {} not found", index)))?;
+            .ok_or_else(|| PptxError::NotFound(format!("Slide {index} not found")))?;
         
         let xml = self.package.get_part(path)
-            .ok_or_else(|| PptxError::NotFound(format!("Slide file not found: {}", path)))?;
+            .ok_or_else(|| PptxError::NotFound(format!("Slide file not found: {path}")))?;
         
         let xml_str = String::from_utf8_lossy(xml);
         SlideParser::parse(&xml_str)
@@ -155,7 +155,7 @@ impl PresentationReader {
                             let full_path = if target.starts_with('/') {
                                 target[1..].to_string()
                             } else {
-                                format!("ppt/{}", target)
+                                format!("ppt/{target}")
                             };
                             slide_rels.push((id.to_string(), full_path));
                         }
