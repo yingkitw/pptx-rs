@@ -1,6 +1,6 @@
 # PPTX Examples
 
-This directory contains examples demonstrating different ways to generate PowerPoint presentations using pptx-rs.
+This directory contains examples demonstrating different ways to generate PowerPoint presentations using ppt-rs.
 
 ## Markdown Examples
 
@@ -103,7 +103,7 @@ This will create:
 
 Example:
 ```rust
-use pptx_rs::generator::{SlideContent, create_pptx_with_content};
+use ppt_rs::generator::{SlideContent, create_pptx_with_content};
 
 let slides = vec![
     SlideContent::new("Title").add_bullet("Point 1"),

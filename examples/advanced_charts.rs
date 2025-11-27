@@ -1,6 +1,6 @@
 //! Advanced chart examples with multiple chart types and data
 
-use pptx_rs::generator::{
+use ppt_rs::generator::{
     create_pptx_with_content, SlideContent,
 };
 

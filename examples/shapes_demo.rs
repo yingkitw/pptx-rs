@@ -2,7 +2,7 @@
 //!
 //! Shows various shape types, fills, lines, and text in shapes.
 
-use pptx_rs::generator::{
+use ppt_rs::generator::{
     Shape, ShapeType, ShapeFill, ShapeLine,
     generate_shape_xml, generate_shapes_xml, generate_connector_xml,
     inches_to_emu, cm_to_emu,

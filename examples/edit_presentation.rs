@@ -7,8 +7,8 @@
 //! - Remove slides
 //! - Save modified presentations
 
-use pptx_rs::generator::{create_pptx_with_content, SlideContent, SlideLayout};
-use pptx_rs::oxml::{PresentationEditor, PresentationReader};
+use ppt_rs::generator::{create_pptx_with_content, SlideContent, SlideLayout};
+use ppt_rs::oxml::{PresentationEditor, PresentationReader};
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

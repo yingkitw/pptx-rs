@@ -1,6 +1,6 @@
 //! Example demonstrating chart generation in PPTX presentations
 
-use pptx_rs::generator::{
+use ppt_rs::generator::{
     create_pptx_with_content, SlideContent,
 };
 

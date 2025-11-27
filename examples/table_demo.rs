@@ -1,4 +1,4 @@
-use pptx_rs::generator::{SlideContent, Table, TableRow, TableCell, create_pptx_with_content};
+use ppt_rs::generator::{SlideContent, Table, TableRow, TableCell, create_pptx_with_content};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let slides = vec![

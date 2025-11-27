@@ -6,8 +6,8 @@
 //! - Parse slide content (titles, bullets, shapes)
 //! - Extract all text from a presentation
 
-use pptx_rs::generator::{create_pptx_with_content, SlideContent, SlideLayout};
-use pptx_rs::oxml::{PresentationReader, SlideParser};
+use ppt_rs::generator::{create_pptx_with_content, SlideContent, SlideLayout};
+use ppt_rs::oxml::{PresentationReader, SlideParser};
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

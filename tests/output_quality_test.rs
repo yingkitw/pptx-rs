@@ -8,7 +8,7 @@
 //! - Content preservation
 //! - File integrity
 
-use pptx_rs::generator::{
+use ppt_rs::generator::{
     SlideContent, Table, TableRow, TableCell, SlideLayout, create_pptx_with_content,
 };
 use std::fs;

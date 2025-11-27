@@ -1,4 +1,4 @@
-use pptx_rs::generator::{create_pptx_with_content, SlideContent, SlideLayout};
+use ppt_rs::generator::{create_pptx_with_content, SlideContent, SlideLayout};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let slides = vec![

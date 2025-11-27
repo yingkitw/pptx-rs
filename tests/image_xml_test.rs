@@ -2,7 +2,7 @@
 //!
 //! Tests the image XML generation module
 
-use pptx_rs::generator::{Image, ImageBuilder, generate_image_xml, generate_image_relationship, generate_image_content_type};
+use ppt_rs::generator::{Image, ImageBuilder, generate_image_xml, generate_image_relationship, generate_image_content_type};
 
 // ============================================================================
 // IMAGE CREATION TESTS

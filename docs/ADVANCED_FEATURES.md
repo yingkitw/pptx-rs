@@ -16,7 +16,7 @@ The `TextFormat` struct provides comprehensive text styling options:
 ### Usage
 
 ```rust
-use pptx_rs::generator::{TextFormat, FormattedText};
+use ppt_rs::generator::{TextFormat, FormattedText};
 
 // Create a text format
 let format = TextFormat::new()
@@ -74,7 +74,7 @@ Each shape can be customized with:
 ### Usage
 
 ```rust
-use pptx_rs::generator::{Shape, ShapeType, ShapeFill, ShapeLine};
+use ppt_rs::generator::{Shape, ShapeType, ShapeFill, ShapeLine};
 
 // Create a rectangle with blue fill
 let shape = Shape::new(ShapeType::Rectangle, 0, 0, 1000000, 500000)
@@ -95,7 +95,7 @@ PPTX uses EMU for measurements:
 
 Helper functions:
 ```rust
-use pptx_rs::generator::shapes::{inches_to_emu, cm_to_emu, emu_to_inches};
+use ppt_rs::generator::shapes::{inches_to_emu, cm_to_emu, emu_to_inches};
 
 let emu = inches_to_emu(1.0);      // 914400
 let emu = cm_to_emu(2.54);         // 914400
@@ -116,7 +116,7 @@ The tables module provides support for creating structured data tables with:
 
 #### TableCell
 ```rust
-use pptx_rs::generator::TableCell;
+use ppt_rs::generator::TableCell;
 
 let cell = TableCell::new("Header")
     .bold()
@@ -125,7 +125,7 @@ let cell = TableCell::new("Header")
 
 #### TableRow
 ```rust
-use pptx_rs::generator::{TableRow, TableCell};
+use ppt_rs::generator::{TableRow, TableCell};
 
 let cells = vec![
     TableCell::new("Name"),
@@ -136,7 +136,7 @@ let row = TableRow::new(cells).with_height(500000);
 
 #### Table
 ```rust
-use pptx_rs::generator::Table;
+use ppt_rs::generator::Table;
 
 let table = Table::from_data(
     vec![
@@ -155,7 +155,7 @@ let table = Table::from_data(
 For fluent API construction:
 
 ```rust
-use pptx_rs::generator::TableBuilder;
+use ppt_rs::generator::TableBuilder;
 
 let table = TableBuilder::new(vec![1000000, 1000000])
     .position(100000, 200000)
@@ -169,7 +169,7 @@ let table = TableBuilder::new(vec![1000000, 1000000])
 ### Text Formatting Example
 
 ```rust
-use pptx_rs::generator::{SlideContent, create_pptx_with_content};
+use ppt_rs::generator::{SlideContent, create_pptx_with_content};
 
 let slides = vec![
     SlideContent::new("Formatted Text")
@@ -184,7 +184,7 @@ let pptx = create_pptx_with_content("Formatting Demo", slides)?;
 ### Shapes Example
 
 ```rust
-use pptx_rs::generator::{Shape, ShapeType, ShapeFill};
+use ppt_rs::generator::{Shape, ShapeType, ShapeFill};
 
 let shapes = vec![
     Shape::new(ShapeType::Rectangle, 0, 0, 1000000, 500000)
@@ -197,7 +197,7 @@ let shapes = vec![
 ### Tables Example
 
 ```rust
-use pptx_rs::generator::TableBuilder;
+use ppt_rs::generator::TableBuilder;
 
 let table = TableBuilder::new(vec![1000000, 1000000, 1000000])
     .add_simple_row(vec!["Q1", "Q2", "Q3"])

@@ -5,7 +5,7 @@
 //! # Quick Start
 //!
 //! ```rust,no_run
-//! use pptx_rs::{create_pptx_with_content, SlideContent};
+//! use ppt_rs::{create_pptx_with_content, SlideContent};
 //!
 //! let slides = vec![
 //!     SlideContent::new("Welcome")

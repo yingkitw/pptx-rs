@@ -3,7 +3,7 @@
 //! Tests various PPTX components: slides, text, formatting, layouts, etc.
 //! Also generates example files demonstrating each element type
 
-use pptx_rs::generator::{
+use ppt_rs::generator::{
     SlideContent, create_pptx_with_content,
 };
 use std::fs;

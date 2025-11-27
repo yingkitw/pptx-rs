@@ -3,7 +3,7 @@
 //! Run with: cargo run --example proper_pptx
 
 use std::fs;
-use pptx_rs::generator;
+use ppt_rs::generator;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Generating proper PPTX files...\n");

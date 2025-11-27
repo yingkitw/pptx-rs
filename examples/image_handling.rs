@@ -3,7 +3,7 @@
 //! Demonstrates image creation, scaling, and XML generation
 //! Run with: cargo run --example image_handling
 
-use pptx_rs::generator::{Image, ImageBuilder, generate_image_xml};
+use ppt_rs::generator::{Image, ImageBuilder, generate_image_xml};
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

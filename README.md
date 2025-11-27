@@ -1,12 +1,12 @@
-# pptx-rs
+# ppt-rs
 
 **The Rust library for generating PowerPoint presentations that actually works.**
 
-While other Rust crates for PPTX generation are incomplete, broken, or abandoned, `pptx-rs` generates **valid, production-ready PowerPoint files** that open correctly in PowerPoint, LibreOffice, Google Slides, and other Office applications.
+While other Rust crates for PPTX generation are incomplete, broken, or abandoned, `ppt-rs` generates **valid, production-ready PowerPoint files** that open correctly in PowerPoint, LibreOffice, Google Slides, and other Office applications.
 
 **🎯 Convert Markdown to PowerPoint in seconds** - Write your slides in Markdown, get a professional PPTX file. No PowerPoint needed.
 
-## Why pptx-rs?
+## Why ppt-rs?
 
 - 🚀 **Markdown to PPTX** - Write slides in Markdown, get PowerPoint files. Perfect for developers.
 - ✅ **Actually works** - Generates valid PPTX files that open in all major presentation software
@@ -55,7 +55,7 @@ That's it! You now have a valid PowerPoint file that opens in PowerPoint, Google
 ### Library
 
 ```rust
-use pptx_rs::generator::{SlideContent, create_pptx_with_content};
+use ppt_rs::generator::{SlideContent, create_pptx_with_content};
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -118,7 +118,7 @@ Add to `Cargo.toml`:
 
 ```toml
 [dependencies]
-pptx-rs = "0.1"
+ppt-rs = "0.1"
 ```
 
 ## Examples
@@ -126,7 +126,7 @@ pptx-rs = "0.1"
 ### Tables
 
 ```rust
-use pptx_rs::generator::{SlideContent, TableBuilder, create_pptx_with_content};
+use ppt_rs::generator::{SlideContent, TableBuilder, create_pptx_with_content};
 
 let table = TableBuilder::new(vec![2000000, 2000000])
     .add_simple_row(vec!["Name", "Status"])
@@ -141,7 +141,7 @@ let slides = vec![
 ### Charts
 
 ```rust
-use pptx_rs::generator::{ChartBuilder, ChartType, ChartSeries};
+use ppt_rs::generator::{ChartBuilder, ChartType, ChartSeries};
 
 let chart = ChartBuilder::new("Sales", ChartType::Bar)
     .categories(vec!["Q1", "Q2", "Q3"])
@@ -152,7 +152,7 @@ let chart = ChartBuilder::new("Sales", ChartType::Bar)
 ### Shapes
 
 ```rust
-use pptx_rs::generator::{Shape, ShapeType, ShapeFill};
+use ppt_rs::generator::{Shape, ShapeType, ShapeFill};
 
 let shape = Shape::new(ShapeType::Rectangle, 0, 0, 1000000, 500000)
     .with_fill(ShapeFill::new("FF0000"))
@@ -167,7 +167,7 @@ Unlike other Rust PPTX crates that:
 - ❌ Are abandoned or unmaintained
 - ❌ Lack proper XML structure
 
-`pptx-rs`:
+`ppt-rs`:
 - ✅ Generates **valid PPTX files** from day one
 - ✅ **Actively maintained** with comprehensive test coverage
 - ✅ **Complete XML structure** following ECMA-376 standard

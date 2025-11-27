@@ -3,7 +3,7 @@
 //! Demonstrates all text formatting capabilities
 //! Run with: cargo run --example text_styling_complete
 
-use pptx_rs::generator::{SlideContent, create_pptx_with_content};
+use ppt_rs::generator::{SlideContent, create_pptx_with_content};
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

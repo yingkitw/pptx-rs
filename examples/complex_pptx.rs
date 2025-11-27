@@ -3,7 +3,7 @@
 //! Run with: cargo run --example complex_pptx
 
 use std::fs;
-use pptx_rs::generator::{SlideContent, create_pptx_with_content};
+use ppt_rs::generator::{SlideContent, create_pptx_with_content};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Generating complex PPTX files...\n");

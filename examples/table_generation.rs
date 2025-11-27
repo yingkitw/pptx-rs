@@ -3,7 +3,7 @@
 //! Demonstrates table creation and rendering in PPTX presentations
 //! Run with: cargo run --example table_generation
 
-use pptx_rs::generator::{SlideContent, Table, TableRow, TableCell, TableBuilder, create_pptx_with_content};
+use ppt_rs::generator::{SlideContent, Table, TableRow, TableCell, TableBuilder, create_pptx_with_content};
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

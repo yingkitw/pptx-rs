@@ -3,7 +3,7 @@
 //! Tests for complex PPTX components including data tables, charts, and images
 //! Generates example files demonstrating each advanced element type
 
-use pptx_rs::generator::{
+use ppt_rs::generator::{
     SlideContent, create_pptx_with_content,
     Table, TableRow, TableCell, TableBuilder,
 };

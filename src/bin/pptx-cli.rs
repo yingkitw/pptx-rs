@@ -1,7 +1,7 @@
 //! PPTX CLI - Command-line tool for creating PowerPoint presentations
 
 use clap::Parser;
-use pptx_rs::cli::{Cli, Commands, CreateCommand, FromMarkdownCommand, InfoCommand};
+use ppt_rs::cli::{Cli, Commands, CreateCommand, FromMarkdownCommand, InfoCommand};
 
 fn main() {
     let cli = Cli::parse();

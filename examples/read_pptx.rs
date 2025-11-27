@@ -1,11 +1,11 @@
 //! Example demonstrating reading and inspecting PPTX files
 
-use pptx_rs::opc::package::Package;
+use ppt_rs::opc::package::Package;
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // First, create a sample PPTX file to read
-    use pptx_rs::generator::{create_pptx_with_content, SlideContent};
+    use ppt_rs::generator::{create_pptx_with_content, SlideContent};
 
     let slides = vec![
         SlideContent::new("Sample Presentation")

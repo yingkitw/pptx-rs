@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document describes the organization of the pptx-rs codebase and how to navigate and extend it.
+This document describes the organization of the ppt-rs codebase and how to navigate and extend it.
 
 ## Directory Structure
 
@@ -64,7 +64,7 @@ src/
 
 **Usage**:
 ```rust
-use pptx_rs::generator::{create_pptx, create_pptx_with_content, SlideContent};
+use ppt_rs::generator::{create_pptx, create_pptx_with_content, SlideContent};
 
 // Simple presentation
 let pptx = create_pptx("My Presentation", 5)?;
@@ -85,7 +85,7 @@ let pptx = create_pptx_with_content("Title", slides)?;
 
 **Usage**:
 ```rust
-use pptx_rs::integration::PresentationBuilder;
+use ppt_rs::integration::PresentationBuilder;
 
 let builder = PresentationBuilder::new("My Presentation")
     .with_slides(5);

@@ -9,14 +9,14 @@
 //! 6. Images (placeholder)
 //! 7. Package reading/writing
 
-use pptx_rs::generator::{
+use ppt_rs::generator::{
     create_pptx_with_content, SlideContent, SlideLayout,
     TableRow, TableCell, TableBuilder,
     ChartType, ChartSeries, ChartBuilder,
     Shape, ShapeType, ShapeFill,
     Image,
 };
-use pptx_rs::opc::Package;
+use ppt_rs::opc::Package;
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {

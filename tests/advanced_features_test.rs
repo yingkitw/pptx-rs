@@ -3,7 +3,7 @@
 //! Tests text formatting, shapes, and tables functionality
 //! Also generates example PPTX files for manual verification
 
-use pptx_rs::generator::{
+use ppt_rs::generator::{
     TextFormat, FormattedText,
     Shape, ShapeType, ShapeFill, ShapeLine,
     Table, TableRow, TableCell, TableBuilder,
@@ -385,7 +385,7 @@ fn test_table_builder_complete() {
 
 #[test]
 fn test_inches_to_emu() {
-    use pptx_rs::generator::shapes::inches_to_emu;
+    use ppt_rs::generator::shapes::inches_to_emu;
     assert_eq!(inches_to_emu(1.0), 914400);
     assert_eq!(inches_to_emu(2.0), 1828800);
     assert_eq!(inches_to_emu(0.5), 457200);
@@ -393,21 +393,21 @@ fn test_inches_to_emu() {
 
 #[test]
 fn test_emu_to_inches() {
-    use pptx_rs::generator::shapes::emu_to_inches;
+    use ppt_rs::generator::shapes::emu_to_inches;
     let inches = emu_to_inches(914400);
     assert!((inches - 1.0).abs() < 0.001);
 }
 
 #[test]
 fn test_cm_to_emu() {
-    use pptx_rs::generator::shapes::cm_to_emu;
+    use ppt_rs::generator::shapes::cm_to_emu;
     assert_eq!(cm_to_emu(2.54), 914400); // 1 inch
     assert_eq!(cm_to_emu(5.08), 1828800); // 2 inches
 }
 
 #[test]
 fn test_emu_conversions_roundtrip() {
-    use pptx_rs::generator::shapes::{inches_to_emu, emu_to_inches};
+    use ppt_rs::generator::shapes::{inches_to_emu, emu_to_inches};
     
     let original = 1.5;
     let emu = inches_to_emu(original);

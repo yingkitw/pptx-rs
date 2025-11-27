@@ -59,7 +59,7 @@ Implemented comprehensive content integration: tables, charts, and images now em
 
 ## Previous Session Summary
 
-Successfully implemented comprehensive chart support and PPTX reading capabilities for the pptx-rs library.
+Successfully implemented comprehensive chart support and PPTX reading capabilities for the ppt-rs library.
 
 ## Major Accomplishments
 
@@ -251,7 +251,7 @@ All features verified through:
 
 ## Conclusion
 
-The pptx-rs library now has robust support for:
+The ppt-rs library now has robust support for:
 - Creating presentations with advanced formatting
 - Generating charts (bar, line, pie)
 - Reading and inspecting PPTX files
