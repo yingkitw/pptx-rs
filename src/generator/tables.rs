@@ -5,7 +5,12 @@
 pub struct TableCell {
     pub text: String,
     pub bold: bool,
-    pub background_color: Option<String>, // RGB hex color
+    pub italic: bool,
+    pub underline: bool,
+    pub text_color: Option<String>,      // RGB hex color for text
+    pub background_color: Option<String>, // RGB hex color for background
+    pub font_size: Option<u32>,          // Font size in points
+    pub font_family: Option<String>,     // Font family name
 }
 
 impl TableCell {
@@ -14,19 +19,54 @@ impl TableCell {
         TableCell {
             text: text.to_string(),
             bold: false,
+            italic: false,
+            underline: false,
+            text_color: None,
             background_color: None,
+            font_size: None,
+            font_family: None,
         }
     }
 
-    /// Set cell as bold
+    /// Set cell text as bold
     pub fn bold(mut self) -> Self {
         self.bold = true;
         self
     }
 
-    /// Set cell background color
+    /// Set cell text as italic
+    pub fn italic(mut self) -> Self {
+        self.italic = true;
+        self
+    }
+
+    /// Set cell text as underlined
+    pub fn underline(mut self) -> Self {
+        self.underline = true;
+        self
+    }
+
+    /// Set cell text color (RGB hex format, e.g., "FF0000" or "#FF0000")
+    pub fn text_color(mut self, color: &str) -> Self {
+        self.text_color = Some(color.trim_start_matches('#').to_uppercase());
+        self
+    }
+
+    /// Set cell background color (RGB hex format, e.g., "FF0000" or "#FF0000")
     pub fn background_color(mut self, color: &str) -> Self {
         self.background_color = Some(color.trim_start_matches('#').to_uppercase());
+        self
+    }
+
+    /// Set font size in points
+    pub fn font_size(mut self, size: u32) -> Self {
+        self.font_size = Some(size);
+        self
+    }
+
+    /// Set font family name
+    pub fn font_family(mut self, family: &str) -> Self {
+        self.font_family = Some(family.to_string());
         self
     }
 }
@@ -180,10 +220,22 @@ mod tests {
 
     #[test]
     fn test_table_cell_builder() {
-        let cell = TableCell::new("Header").bold().background_color("0000FF");
+        let cell = TableCell::new("Header")
+            .bold()
+            .italic()
+            .underline()
+            .text_color("FF0000")
+            .background_color("0000FF")
+            .font_size(24)
+            .font_family("Arial");
         assert_eq!(cell.text, "Header");
         assert!(cell.bold);
+        assert!(cell.italic);
+        assert!(cell.underline);
+        assert_eq!(cell.text_color, Some("FF0000".to_string()));
         assert_eq!(cell.background_color, Some("0000FF".to_string()));
+        assert_eq!(cell.font_size, Some(24));
+        assert_eq!(cell.font_family, Some("Arial".to_string()));
     }
 
     #[test]

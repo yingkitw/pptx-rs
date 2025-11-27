@@ -86,11 +86,56 @@ fn generate_cell_xml(cell: &TableCell) -> String {
     // Cell text body - handle multi-line content
     xml.push_str(r#"<a:txBody><a:bodyPr rot="0" vert="horz" anchor="ctr" anchorCtr="0" wrap="square"/><a:lstStyle/><a:p><a:pPr algn="ctr"/><a:r>"#);
 
-    // Text properties
-    let bold = if cell.bold { "1" } else { "0" };
-    xml.push_str(&format!(
-        r#"<a:rPr lang="en-US" sz="2000" b="{bold}"/>"#
-    ));
+    // Build text properties with all formatting options
+    let mut rpr_attrs = vec!["lang=\"en-US\"".to_string()];
+    
+    // Font size (default 20 points = 2000 in EMU, or use specified size)
+    let font_size = cell.font_size.unwrap_or(20) * 100;
+    rpr_attrs.push(format!("sz=\"{}\"", font_size));
+    
+    // Bold
+    if cell.bold {
+        rpr_attrs.push("b=\"1\"".to_string());
+    }
+    
+    // Italic
+    if cell.italic {
+        rpr_attrs.push("i=\"1\"".to_string());
+    }
+    
+    // Underline
+    if cell.underline {
+        rpr_attrs.push("u=\"sng\"".to_string());
+    }
+    
+    // Build the rPr element with all formatting
+    let mut rpr_content = String::new();
+    
+    // Text color if specified
+    if let Some(ref color) = cell.text_color {
+        rpr_content.push_str(&format!(
+            r#"<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>"#
+        ));
+    }
+    
+    // Font family if specified
+    if let Some(ref family) = cell.font_family {
+        rpr_content.push_str(&format!(r#"<a:latin typeface="{family}"/>"#));
+    }
+    
+    // Build the complete rPr element
+    if rpr_content.is_empty() {
+        xml.push_str(&format!(
+            r#"<a:rPr {}/>"#,
+            rpr_attrs.join(" ")
+        ));
+    } else {
+        xml.push_str(&format!(
+            r#"<a:rPr {}>{}</a:rPr>"#,
+            rpr_attrs.join(" "),
+            rpr_content
+        ));
+    }
 
     // Cell text - handle newlines by splitting into multiple paragraphs
     let text = escape_xml(&cell.text);
@@ -101,9 +146,46 @@ fn generate_cell_xml(cell: &TableCell) -> String {
             if i > 0 {
                 // Close previous paragraph and start new one
                 xml.push_str(r#"</a:r></a:p><a:p><a:pPr algn="ctr"/><a:r>"#);
-                xml.push_str(&format!(
-                    r#"<a:rPr lang="en-US" sz="2000" b="{bold}"/>"#
-                ));
+                
+                // Rebuild text properties for new paragraph
+                let mut rpr_attrs = vec!["lang=\"en-US\"".to_string()];
+                let font_size = cell.font_size.unwrap_or(20) * 100;
+                rpr_attrs.push(format!("sz=\"{}\"", font_size));
+                if cell.bold {
+                    rpr_attrs.push("b=\"1\"".to_string());
+                }
+                if cell.italic {
+                    rpr_attrs.push("i=\"1\"".to_string());
+                }
+                if cell.underline {
+                    rpr_attrs.push("u=\"sng\"".to_string());
+                }
+                
+                // Build the rPr element with all formatting for multi-line
+                let mut rpr_content = String::new();
+                
+                if let Some(ref color) = cell.text_color {
+                    rpr_content.push_str(&format!(
+                        r#"<a:solidFill><a:srgbClr val="{color}"/></a:solidFill>"#
+                    ));
+                }
+                
+                if let Some(ref family) = cell.font_family {
+                    rpr_content.push_str(&format!(r#"<a:latin typeface="{family}"/>"#));
+                }
+                
+                if rpr_content.is_empty() {
+                    xml.push_str(&format!(
+                        r#"<a:rPr {}/>"#,
+                        rpr_attrs.join(" ")
+                    ));
+                } else {
+                    xml.push_str(&format!(
+                        r#"<a:rPr {}>{}</a:rPr>"#,
+                        rpr_attrs.join(" "),
+                        rpr_content
+                    ));
+                }
             }
             xml.push_str(&format!(r#"<a:t>{line}</a:t>"#));
         }
@@ -153,10 +235,67 @@ mod tests {
     }
 
     #[test]
-    fn test_generate_cell_with_color() {
+    fn test_generate_cell_with_background_color() {
         let cell = TableCell::new("Colored").background_color("FF0000");
         let xml = generate_cell_xml(&cell);
         assert!(xml.contains("FF0000"));
+    }
+
+    #[test]
+    fn test_generate_cell_with_italic() {
+        let cell = TableCell::new("Italic").italic();
+        let xml = generate_cell_xml(&cell);
+        assert!(xml.contains(r#"i="1""#));
+    }
+
+    #[test]
+    fn test_generate_cell_with_underline() {
+        let cell = TableCell::new("Underline").underline();
+        let xml = generate_cell_xml(&cell);
+        assert!(xml.contains(r#"u="sng""#));
+    }
+
+    #[test]
+    fn test_generate_cell_with_text_color() {
+        let cell = TableCell::new("Red Text").text_color("FF0000");
+        let xml = generate_cell_xml(&cell);
+        assert!(xml.contains("FF0000"));
+        assert!(xml.contains("srgbClr"));
+    }
+
+    #[test]
+    fn test_generate_cell_with_font_size() {
+        let cell = TableCell::new("Large").font_size(24);
+        let xml = generate_cell_xml(&cell);
+        assert!(xml.contains("sz=\"2400\""));
+    }
+
+    #[test]
+    fn test_generate_cell_with_font_family() {
+        let cell = TableCell::new("Arial").font_family("Arial");
+        let xml = generate_cell_xml(&cell);
+        assert!(xml.contains("typeface=\"Arial\""));
+        assert!(xml.contains("latin"));
+    }
+
+    #[test]
+    fn test_generate_cell_with_all_formatting() {
+        let cell = TableCell::new("Styled")
+            .bold()
+            .italic()
+            .underline()
+            .text_color("0000FF")
+            .background_color("FFFF00")
+            .font_size(18)
+            .font_family("Calibri");
+        let xml = generate_cell_xml(&cell);
+        assert!(xml.contains(r#"b="1""#));
+        assert!(xml.contains(r#"i="1""#));
+        assert!(xml.contains(r#"u="sng""#));
+        assert!(xml.contains("0000FF")); // text color
+        assert!(xml.contains("FFFF00")); // background color
+        assert!(xml.contains("sz=\"1800\""));
+        assert!(xml.contains("typeface=\"Calibri\""));
     }
 
     #[test]
