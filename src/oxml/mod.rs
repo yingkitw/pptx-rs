@@ -9,6 +9,7 @@ pub mod dml;
 pub mod editor;
 pub mod ns;
 pub mod presentation;
+pub mod repair;
 pub mod shapes;
 pub mod simpletypes;
 pub mod slide;
@@ -50,3 +51,6 @@ pub use dml::{
 
 // Chart elements
 pub use chart::{ChartKind, ChartSeries as OxmlChartSeries, ChartAxis, ChartLegend, ChartTitle, NumericData, StringData, DataPoint, CategoryPoint};
+
+// Repair functionality
+pub use repair::{PptxRepair, RepairIssue, RepairResult};

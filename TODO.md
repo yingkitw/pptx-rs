@@ -2,6 +2,16 @@
 
 ## Recently Completed
 
+### PPTX Repair Capability (v1.0.7)
+- [x] Added `PptxRepair` struct for opening and repairing PPTX files
+- [x] Added `RepairIssue` enum with 9 issue types (MissingPart, InvalidXml, BrokenRelationship, etc.)
+- [x] Added `RepairResult` struct for tracking repair outcomes
+- [x] Implemented validation logic to detect common PPTX issues
+- [x] Implemented repair logic to fix detected issues
+- [x] Added 16 new tests for repair functionality
+- [x] Created `examples/repair_pptx.rs` example
+- [x] All 208 tests passing
+
 ### Speaker Notes Support (v1.0.6)
 - [x] Added `notes` field to `SlideContent` struct
 - [x] Added `.notes()` builder method for adding speaker notes

@@ -84,6 +84,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 - **Charts** - Bar, line, pie charts with multiple series
 - **Images** - Embed and position images
 - **Reading** - Parse and modify existing PPTX files
+- **Repair** - Validate and fix damaged PPTX files
 
 ### Markdown Format
 
@@ -133,6 +134,38 @@ This checks:
 ```bash
 pptcli info presentation.pptx
 ```
+
+### Repair PPTX Files
+
+Repair damaged or corrupted PPTX files:
+
+```rust
+use ppt_rs::oxml::repair::PptxRepair;
+
+// Open and validate
+let mut repair = PptxRepair::open("damaged.pptx")?;
+let issues = repair.validate();
+
+println!("Found {} issues", issues.len());
+for issue in &issues {
+    println!("  - {} (severity: {})", issue.description(), issue.severity());
+}
+
+// Repair and save
+let result = repair.repair();
+if result.is_valid {
+    repair.save("repaired.pptx")?;
+    println!("File repaired successfully!");
+}
+```
+
+**Detectable Issues:**
+- Missing required parts (Content_Types.xml, relationships)
+- Invalid or malformed XML
+- Broken relationship references
+- Missing slide references
+- Orphan slides
+- Invalid content types
 
 ## Installation
 

@@ -59,5 +59,6 @@ pub use generator::{
     Chart, ChartType, ChartSeries, ChartBuilder,
 };
 pub use integration::{PresentationBuilder, SlideBuilder, PresentationMetadata};
+pub use oxml::repair::{PptxRepair, RepairIssue, RepairResult};
 
 pub const VERSION: &str = "1.0.3";
