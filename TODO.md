@@ -2,6 +2,27 @@
 
 ## Recently Completed
 
+### Code Modularization (v1.0.18)
+- [x] **Modularized slide_xml** into separate files:
+  - `slide_xml/mod.rs` - Main entry point and simple slide creation
+  - `slide_xml/common.rs` - Shared XML templates and utilities
+  - `slide_xml/layouts.rs` - Layout implementations (blank, title, content, etc.)
+  - `slide_xml/content.rs` - Additional content rendering (shapes, images, code)
+- [x] **Modularized mermaid code** into separate files:
+  - `mermaid/mod.rs` - Main entry point and detection
+  - `mermaid/types.rs` - Shared types (MermaidType, FlowNode, etc.)
+  - `mermaid/flowchart.rs` - Flowchart parsing and rendering
+  - `mermaid/sequence.rs` - Sequence diagram rendering
+  - `mermaid/pie.rs` - Pie chart rendering
+  - `mermaid/gantt.rs` - Gantt chart rendering
+  - `mermaid/class_diagram.rs` - Class diagram rendering
+  - `mermaid/state_diagram.rs` - State diagram rendering
+  - `mermaid/er_diagram.rs` - ER diagram rendering
+  - `mermaid/mindmap.rs` - Mindmap rendering
+  - `mermaid/timeline.rs` - Timeline rendering
+- [x] All 9 diagram types supported
+- [x] All 451+ tests passing
+
 ### Mermaid Diagram Rendering with Shapes (v1.0.17)
 - [x] **Flowchart diagrams** - Nodes, subgraphs, connectors
 - [x] **Sequence diagrams** - Participants, lifelines, messages
@@ -12,8 +33,6 @@
 - [x] **ER diagrams** - Entities with attributes, relationships
 - [x] **Mindmaps** - Radial layout with root and branches
 - [x] **Timelines** - Horizontal timeline with events
-- [x] All 9 diagram types fully rendered with shapes and connectors
-- [x] All tests passing
 
 ### Code Modularization & Syntax Highlighting (v1.0.16)
 - [x] **Syntax highlighting with Solarized Dark theme**

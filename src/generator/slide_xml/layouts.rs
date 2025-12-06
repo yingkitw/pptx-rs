@@ -1,0 +1,414 @@
+//! Slide layout implementations
+
+use crate::generator::slide_content::SlideContent;
+use crate::generator::package_xml::escape_xml;
+use crate::generator::slide::formatting::{generate_rich_text_runs, generate_text_props};
+use super::common::{SLIDE_HEADER, SLIDE_FOOTER, generate_title_shape};
+use super::content::render_additional_content;
+
+/// Create a blank slide
+pub fn create_blank_slide() -> String {
+    format!("{}{}", SLIDE_HEADER, SLIDE_FOOTER)
+}
+
+/// Create a title-only slide
+pub fn create_title_only_slide(content: &SlideContent) -> String {
+    let title_size = content.title_size.unwrap_or(44) * 100;
+    let title_props = generate_text_props(
+        title_size,
+        content.title_bold,
+        content.title_italic,
+        content.title_underline,
+        content.title_color.as_deref(),
+    );
+    let title_text = escape_xml(&content.title);
+
+    let title_shape = generate_title_shape(
+        &title_text,
+        &title_props,
+        457200,   // x
+        274638,   // y
+        8230200,  // width
+        1143000,  // height
+        "l",      // align left
+    );
+
+    format!("{}\n{}{}", SLIDE_HEADER, title_shape, SLIDE_FOOTER)
+}
+
+/// Create a centered title slide
+pub fn create_centered_title_slide(content: &SlideContent) -> String {
+    let title_size = content.title_size.unwrap_or(54) * 100;
+    let title_props = generate_text_props(
+        title_size,
+        content.title_bold,
+        content.title_italic,
+        content.title_underline,
+        content.title_color.as_deref(),
+    );
+    let title_text = escape_xml(&content.title);
+
+    let title_shape = generate_title_shape(
+        &title_text,
+        &title_props,
+        457200,   // x
+        2743200,  // y (centered vertically)
+        8230200,  // width
+        1371600,  // height
+        "ctr",    // align center
+    );
+
+    format!("{}\n{}{}", SLIDE_HEADER, title_shape, SLIDE_FOOTER)
+}
+
+/// Create a title and big content slide
+pub fn create_title_and_big_content_slide(content: &SlideContent) -> String {
+    let title_size = content.title_size.unwrap_or(44) * 100;
+    let content_size = content.content_size.unwrap_or(28) * 100;
+
+    let title_props = generate_text_props(
+        title_size,
+        content.title_bold,
+        content.title_italic,
+        content.title_underline,
+        content.title_color.as_deref(),
+    );
+    let title_text = escape_xml(&content.title);
+
+    let mut xml = String::from(SLIDE_HEADER);
+    
+    // Title shape
+    xml.push_str(&format!(
+        r#"
+<p:sp>
+<p:nvSpPr>
+<p:cNvPr id="2" name="Title"/>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
+</p:nvSpPr>
+<p:spPr>
+<a:xfrm>
+<a:off x="457200" y="274638"/>
+<a:ext cx="8230200" cy="914400"/>
+</a:xfrm>
+<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+<a:noFill/>
+</p:spPr>
+<p:txBody>
+<a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
+<a:lstStyle/>
+<a:p>
+<a:pPr algn="l"/>
+<a:r>
+{title_props}
+<a:t>{title_text}</a:t>
+</a:r>
+</a:p>
+</p:txBody>
+</p:sp>"#
+    ));
+
+    // Content
+    if !content.content.is_empty() {
+        xml.push_str(
+            r#"
+<p:sp>
+<p:nvSpPr>
+<p:cNvPr id="3" name="Content"/>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
+</p:nvSpPr>
+<p:spPr>
+<a:xfrm>
+<a:off x="457200" y="1189200"/>
+<a:ext cx="8230200" cy="5668800"/>
+</a:xfrm>
+<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+<a:noFill/>
+</p:spPr>
+<p:txBody>
+<a:bodyPr wrap="square" rtlCol="0"/>
+<a:lstStyle/>"#
+        );
+
+        for bullet in content.content.iter() {
+            let rich_text = generate_rich_text_runs(
+                bullet,
+                content_size,
+                content.content_bold,
+                content.content_italic,
+                content.content_color.as_deref(),
+            );
+            xml.push_str(&format!(
+                r#"
+<a:p>
+<a:pPr lvl="0"/>
+{rich_text}
+</a:p>"#
+            ));
+        }
+
+        xml.push_str(
+            r#"
+</p:txBody>
+</p:sp>"#
+        );
+    }
+
+    xml.push_str(SLIDE_FOOTER);
+    xml
+}
+
+/// Create a two-column slide
+pub fn create_two_column_slide(content: &SlideContent) -> String {
+    let title_size = content.title_size.unwrap_or(44) * 100;
+    let content_size = content.content_size.unwrap_or(24) * 100;
+
+    let title_props = generate_text_props(
+        title_size,
+        content.title_bold,
+        content.title_italic,
+        content.title_underline,
+        content.title_color.as_deref(),
+    );
+    let title_text = escape_xml(&content.title);
+
+    let mut xml = String::from(SLIDE_HEADER);
+    
+    // Title
+    xml.push_str(&format!(
+        r#"
+<p:sp>
+<p:nvSpPr>
+<p:cNvPr id="2" name="Title"/>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
+</p:nvSpPr>
+<p:spPr>
+<a:xfrm>
+<a:off x="457200" y="274638"/>
+<a:ext cx="8230200" cy="914400"/>
+</a:xfrm>
+<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+<a:noFill/>
+</p:spPr>
+<p:txBody>
+<a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
+<a:lstStyle/>
+<a:p>
+<a:pPr algn="l"/>
+<a:r>
+{title_props}
+<a:t>{title_text}</a:t>
+</a:r>
+</a:p>
+</p:txBody>
+</p:sp>"#
+    ));
+
+    if !content.content.is_empty() {
+        let mid = content.content.len().div_ceil(2);
+        let left_content = &content.content[..mid];
+        let right_content = &content.content[mid..];
+
+        // Left column
+        xml.push_str(
+            r#"
+<p:sp>
+<p:nvSpPr>
+<p:cNvPr id="3" name="Left Content"/>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
+</p:nvSpPr>
+<p:spPr>
+<a:xfrm>
+<a:off x="457200" y="1189200"/>
+<a:ext cx="4115100" cy="5668800"/>
+</a:xfrm>
+<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+<a:noFill/>
+</p:spPr>
+<p:txBody>
+<a:bodyPr wrap="square" rtlCol="0"/>
+<a:lstStyle/>"#
+        );
+
+        for bullet in left_content.iter() {
+            let rich_text = generate_rich_text_runs(
+                bullet,
+                content_size,
+                content.content_bold,
+                content.content_italic,
+                content.content_color.as_deref(),
+            );
+            xml.push_str(&format!(
+                r#"
+<a:p>
+<a:pPr lvl="0"/>
+{rich_text}
+</a:p>"#
+            ));
+        }
+
+        xml.push_str(
+            r#"
+</p:txBody>
+</p:sp>"#
+        );
+
+        // Right column
+        if !right_content.is_empty() {
+            xml.push_str(
+                r#"
+<p:sp>
+<p:nvSpPr>
+<p:cNvPr id="4" name="Right Content"/>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
+</p:nvSpPr>
+<p:spPr>
+<a:xfrm>
+<a:off x="4572300" y="1189200"/>
+<a:ext cx="4115100" cy="5668800"/>
+</a:xfrm>
+<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+<a:noFill/>
+</p:spPr>
+<p:txBody>
+<a:bodyPr wrap="square" rtlCol="0"/>
+<a:lstStyle/>"#
+            );
+
+            for bullet in right_content.iter() {
+                let rich_text = generate_rich_text_runs(
+                    bullet,
+                    content_size,
+                    content.content_bold,
+                    content.content_italic,
+                    content.content_color.as_deref(),
+                );
+                xml.push_str(&format!(
+                    r#"
+<a:p>
+<a:pPr lvl="0"/>
+{rich_text}
+</a:p>"#
+                ));
+            }
+
+            xml.push_str(
+                r#"
+</p:txBody>
+</p:sp>"#
+            );
+        }
+    }
+
+    xml.push_str(SLIDE_FOOTER);
+    xml
+}
+
+/// Create a title and content slide (most common layout)
+pub fn create_title_and_content_slide(content: &SlideContent) -> String {
+    let title_size = content.title_size.unwrap_or(44) * 100;
+    let content_size = content.content_size.unwrap_or(28) * 100;
+
+    let title_props = generate_text_props(
+        title_size,
+        content.title_bold,
+        content.title_italic,
+        content.title_underline,
+        content.title_color.as_deref(),
+    );
+    let title_text = escape_xml(&content.title);
+
+    let mut xml = String::from(SLIDE_HEADER);
+    
+    // Title
+    xml.push_str(&format!(
+        r#"
+<p:sp>
+<p:nvSpPr>
+<p:cNvPr id="2" name="Title"/>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
+</p:nvSpPr>
+<p:spPr>
+<a:xfrm>
+<a:off x="457200" y="274638"/>
+<a:ext cx="8230200" cy="1143000"/>
+</a:xfrm>
+<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+<a:noFill/>
+</p:spPr>
+<p:txBody>
+<a:bodyPr wrap="square" rtlCol="0" anchor="ctr"/>
+<a:lstStyle/>
+<a:p>
+<a:pPr algn="l"/>
+<a:r>
+{title_props}
+<a:t>{title_text}</a:t>
+</a:r>
+</a:p>
+</p:txBody>
+</p:sp>"#
+    ));
+
+    // Render table if present
+    if let Some(ref table) = content.table {
+        xml.push('\n');
+        xml.push_str(&crate::generator::tables_xml::generate_table_xml(table, 3));
+    } else if !content.content.is_empty() {
+        // Render bullets if no table
+        xml.push_str(
+            r#"
+<p:sp>
+<p:nvSpPr>
+<p:cNvPr id="3" name="Content"/>
+<p:cNvSpPr txBox="1"/>
+<p:nvPr/>
+</p:nvSpPr>
+<p:spPr>
+<a:xfrm>
+<a:off x="457200" y="1600200"/>
+<a:ext cx="8230200" cy="4572000"/>
+</a:xfrm>
+<a:prstGeom prst="rect"><a:avLst/></a:prstGeom>
+<a:noFill/>
+</p:spPr>
+<p:txBody>
+<a:bodyPr wrap="square" rtlCol="0"/>
+<a:lstStyle/>"#
+        );
+
+        for bullet in content.content.iter() {
+            let rich_text = generate_rich_text_runs(
+                bullet,
+                content_size,
+                content.content_bold,
+                content.content_italic,
+                content.content_color.as_deref(),
+            );
+            xml.push_str(&format!(
+                r#"
+<a:p>
+<a:pPr lvl="0"/>
+{rich_text}
+</a:p>"#
+            ));
+        }
+
+        xml.push_str(
+            r#"
+</p:txBody>
+</p:sp>"#
+        );
+    }
+
+    // Render additional content (shapes, images, code blocks, connectors)
+    render_additional_content(&mut xml, content);
+
+    xml.push_str(SLIDE_FOOTER);
+    xml
+}
