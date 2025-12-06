@@ -24,8 +24,13 @@ pub mod text;
 
 pub mod shapes;
 pub mod shapes_xml;
+
+// Table module (modularized)
+pub mod table;
+// Keep old modules for backward compatibility
 pub mod tables;
 pub mod tables_xml;
+
 pub mod images;
 pub mod images_xml;
 

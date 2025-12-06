@@ -97,8 +97,8 @@ fn generate_cell_xml(cell: &TableCell) -> String {
     // Build text properties with all formatting options
     let mut rpr_attrs = vec!["lang=\"en-US\"".to_string()];
     
-    // Font size (default 20 points = 2000 in EMU, or use specified size)
-    let font_size = cell.font_size.unwrap_or(20) * 100;
+    // Font size (default 18 points = 1800 in hundredths of a point)
+    let font_size = cell.font_size.unwrap_or(18) * 100;
     rpr_attrs.push(format!("sz=\"{}\"", font_size));
     
     // Bold (always include, "0" for non-bold, "1" for bold)
@@ -106,6 +106,9 @@ fn generate_cell_xml(cell: &TableCell) -> String {
     
     // Italic (always include, "0" for non-italic, "1" for italic)
     rpr_attrs.push(format!("i=\"{}\"", if cell.italic { "1" } else { "0" }));
+    
+    // dirty="0" tells PowerPoint the text doesn't need recalculation
+    rpr_attrs.push("dirty=\"0\"".to_string());
     
     // Underline (only include if underlined)
     if cell.underline {

@@ -2,6 +2,22 @@
 
 ## Recently Completed
 
+### Table Module Modularization (v1.0.13)
+- [x] Created modular `generator/table/` module structure:
+  - `cell.rs` - TableCell with CellAlign, CellVAlign enums
+  - `row.rs` - TableRow with height support
+  - `builder.rs` - Table and TableBuilder
+  - `xml.rs` - XML generation for OOXML tables
+- [x] Added proper text rendering in table cells:
+  - Font specification (latin, ea, cs) always included
+  - Default text color (black) for visibility
+  - dirty="0" attribute for proper rendering
+- [x] Added alignment support:
+  - Horizontal: Left, Center, Right, Justify
+  - Vertical: Top, Middle, Bottom
+- [x] Added text wrapping support
+- [x] Comprehensive test coverage for table module
+
 ### Advanced Features (v1.0.12)
 - [x] Enhanced `TablePart` with advanced formatting:
   - Cell alignment (horizontal: left/center/right/justify, vertical: top/middle/bottom)
