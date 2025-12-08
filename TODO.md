@@ -2,6 +2,26 @@
 
 ## Recently Completed
 
+### v0.1.8 - Diagram Improvements
+- [x] **Connectors now anchor to shapes for auto-routing**
+  - Added `id` field to `Shape` struct for fixed shape IDs
+  - Added `with_id()` builder method to set shape ID
+  - Shapes with fixed IDs preserve their ID during XML generation
+  - Connectors use `stCxn`/`endCxn` XML elements to anchor to shapes
+  - Horizontal flow: connects Right site → Left site
+  - Vertical flow: connects Bottom site → Top site
+  - PowerPoint auto-routes connectors when shapes are moved
+- [x] **Diagram bounding box calculation**
+  - Added `DiagramBounds` struct with x, y, width, height
+  - `DiagramElements` now includes `bounds: Option<DiagramBounds>`
+  - Bounds calculated automatically from shape positions
+  - Enables future centering/scaling of diagrams
+- [x] **Diagram grouping support**
+  - Added `grouped: bool` flag to `DiagramElements`
+  - Helper methods: `from_shapes()`, `from_shapes_and_connectors()`, `empty()`
+  - All diagram types now use consistent element creation
+  - All tests passing
+
 ### v0.1.7 - Code Blocks & Shape Text Improvements
 - [x] **Fixed syntax highlighting in code blocks**
   - Fixed OOXML element order: `<a:solidFill>` must come before `<a:latin>`

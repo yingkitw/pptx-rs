@@ -83,8 +83,97 @@ pub struct Flowchart {
     pub subgraphs: Vec<Subgraph>,
 }
 
+/// Bounding box for diagram positioning
+#[derive(Debug, Clone, Copy)]
+pub struct DiagramBounds {
+    pub x: u32,
+    pub y: u32,
+    pub width: u32,
+    pub height: u32,
+}
+
+impl DiagramBounds {
+    pub fn new(x: u32, y: u32, width: u32, height: u32) -> Self {
+        Self { x, y, width, height }
+    }
+    
+    /// Calculate bounds from a set of positions and dimensions
+    pub fn from_elements(positions: &[(u32, u32, u32, u32)]) -> Option<Self> {
+        if positions.is_empty() {
+            return None;
+        }
+        
+        let mut min_x = u32::MAX;
+        let mut min_y = u32::MAX;
+        let mut max_x = 0u32;
+        let mut max_y = 0u32;
+        
+        for &(x, y, w, h) in positions {
+            min_x = min_x.min(x);
+            min_y = min_y.min(y);
+            max_x = max_x.max(x + w);
+            max_y = max_y.max(y + h);
+        }
+        
+        Some(Self {
+            x: min_x,
+            y: min_y,
+            width: max_x - min_x,
+            height: max_y - min_y,
+        })
+    }
+}
+
 /// Result containing shapes and connectors
 pub struct DiagramElements {
     pub shapes: Vec<Shape>,
     pub connectors: Vec<Connector>,
+    /// Bounding box of the diagram for positioning
+    pub bounds: Option<DiagramBounds>,
+    /// Whether elements should be grouped
+    pub grouped: bool,
+}
+
+impl DiagramElements {
+    /// Create from shapes only (calculates bounds automatically)
+    pub fn from_shapes(shapes: Vec<Shape>) -> Self {
+        let element_bounds: Vec<(u32, u32, u32, u32)> = shapes
+            .iter()
+            .map(|s| (s.x, s.y, s.width, s.height))
+            .collect();
+        let bounds = DiagramBounds::from_elements(&element_bounds);
+        
+        Self {
+            shapes,
+            connectors: Vec::new(),
+            bounds,
+            grouped: true,
+        }
+    }
+    
+    /// Create from shapes and connectors
+    pub fn from_shapes_and_connectors(shapes: Vec<Shape>, connectors: Vec<Connector>) -> Self {
+        let element_bounds: Vec<(u32, u32, u32, u32)> = shapes
+            .iter()
+            .map(|s| (s.x, s.y, s.width, s.height))
+            .collect();
+        let bounds = DiagramBounds::from_elements(&element_bounds);
+        
+        Self {
+            shapes,
+            connectors,
+            bounds,
+            grouped: true,
+        }
+    }
+    
+    /// Create empty diagram elements
+    pub fn empty() -> Self {
+        Self {
+            shapes: Vec::new(),
+            connectors: Vec::new(),
+            bounds: None,
+            grouped: false,
+        }
+    }
 }

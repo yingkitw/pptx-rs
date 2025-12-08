@@ -78,22 +78,14 @@ pub fn create_diagram_elements(code: &str) -> DiagramElements {
         }
         MermaidType::Pie => {
             let slices = pie::parse(code);
-            DiagramElements {
-                shapes: pie::generate_shapes(&slices),
-                connectors: Vec::new(),
-            }
+            let shapes = pie::generate_shapes(&slices);
+            DiagramElements::from_shapes(shapes)
         }
         MermaidType::Sequence => {
-            DiagramElements {
-                shapes: sequence::generate_shapes(code),
-                connectors: Vec::new(),
-            }
+            DiagramElements::from_shapes(sequence::generate_shapes(code))
         }
         MermaidType::Gantt => {
-            DiagramElements {
-                shapes: gantt::generate_shapes(code),
-                connectors: Vec::new(),
-            }
+            DiagramElements::from_shapes(gantt::generate_shapes(code))
         }
         MermaidType::ClassDiagram => {
             class_diagram::generate_elements(code)
@@ -105,46 +97,28 @@ pub fn create_diagram_elements(code: &str) -> DiagramElements {
             er_diagram::generate_elements(code)
         }
         MermaidType::Mindmap => {
-            DiagramElements {
-                shapes: mindmap::generate_shapes(code),
-                connectors: Vec::new(),
-            }
+            DiagramElements::from_shapes(mindmap::generate_shapes(code))
         }
         MermaidType::Timeline => {
-            DiagramElements {
-                shapes: timeline::generate_shapes(code),
-                connectors: Vec::new(),
-            }
+            DiagramElements::from_shapes(timeline::generate_shapes(code))
         }
         MermaidType::Journey => {
-            DiagramElements {
-                shapes: journey::generate_shapes(code),
-                connectors: Vec::new(),
-            }
+            DiagramElements::from_shapes(journey::generate_shapes(code))
         }
         MermaidType::Quadrant => {
-            DiagramElements {
-                shapes: quadrant::generate_shapes(code),
-                connectors: Vec::new(),
-            }
+            DiagramElements::from_shapes(quadrant::generate_shapes(code))
         }
         MermaidType::GitGraph => {
-            DiagramElements {
-                shapes: gitgraph::generate_shapes(code),
-                connectors: Vec::new(),
-            }
+            DiagramElements::from_shapes(gitgraph::generate_shapes(code))
         }
         _ => {
             // Fallback: create a placeholder
-            DiagramElements {
-                shapes: vec![
-                    Shape::new(ShapeType::Rectangle, 1_000_000, 2_000_000, 7_000_000, 3_000_000)
-                        .with_fill(ShapeFill::new("F5F5F5"))
-                        .with_line(ShapeLine::new("757575", 1))
-                        .with_text(&format!("Diagram: {}", code.lines().next().unwrap_or("Unknown")))
-                ],
-                connectors: Vec::new(),
-            }
+            DiagramElements::from_shapes(vec![
+                Shape::new(ShapeType::Rectangle, 1_000_000, 2_000_000, 7_000_000, 3_000_000)
+                    .with_fill(ShapeFill::new("F5F5F5"))
+                    .with_line(ShapeLine::new("757575", 1))
+                    .with_text(&format!("Diagram: {}", code.lines().next().unwrap_or("Unknown")))
+            ])
         }
     }
 }

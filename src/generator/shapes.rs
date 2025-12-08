@@ -476,6 +476,8 @@ pub struct Shape {
     pub fill: Option<ShapeFill>,
     pub line: Option<ShapeLine>,
     pub text: Option<String>,
+    /// Optional fixed shape ID for connector anchoring
+    pub id: Option<u32>,
 }
 
 impl Shape {
@@ -490,7 +492,14 @@ impl Shape {
             fill: None,
             line: None,
             text: None,
+            id: None,
         }
+    }
+
+    /// Set a fixed shape ID (for connector anchoring)
+    pub fn with_id(mut self, id: u32) -> Self {
+        self.id = Some(id);
+        self
     }
 
     /// Set shape fill

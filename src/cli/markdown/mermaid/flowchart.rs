@@ -2,8 +2,8 @@
 
 use std::collections::HashMap;
 use crate::generator::{Shape, ShapeType, ShapeFill, ShapeLine};
-use crate::generator::connectors::{Connector, ConnectorType, ConnectorLine, ArrowType, LineDash};
-use super::types::*;
+use crate::generator::connectors::{Connector, ConnectorType, ConnectorLine, ArrowType, LineDash, ConnectionSite};
+use super::types::{*, DiagramBounds};
 
 /// Parse flowchart direction from first line
 fn parse_direction(first_line: &str) -> FlowDirection {
@@ -189,8 +189,11 @@ pub fn generate_elements(flowchart: &Flowchart) -> DiagramElements {
     let node_count = flowchart.nodes.len();
     
     if node_count == 0 {
-        return DiagramElements { shapes, connectors };
+        return DiagramElements { shapes, connectors, bounds: None, grouped: false };
     }
+    
+    // Track element positions for bounding box calculation
+    let mut element_bounds: Vec<(u32, u32, u32, u32)> = Vec::new();
     
     // Layout parameters (in EMUs)
     let node_width = 1_400_000u32;
@@ -200,8 +203,10 @@ pub fn generate_elements(flowchart: &Flowchart) -> DiagramElements {
     
     let is_horizontal = matches!(flowchart.direction, FlowDirection::LeftToRight | FlowDirection::RightToLeft);
     
+    // Track node positions and their shape IDs for connector anchoring
     let mut node_positions: HashMap<String, (u32, u32)> = HashMap::new();
-    let mut _shape_id = 10u32;
+    let mut node_shape_ids: HashMap<String, u32> = HashMap::new();
+    let mut shape_id = 10u32; // Starting shape ID
     
     // If we have subgraphs, layout by subgraph
     if !flowchart.subgraphs.is_empty() {
@@ -220,6 +225,7 @@ pub fn generate_elements(flowchart: &Flowchart) -> DiagramElements {
                 .with_line(ShapeLine::new("757575", 1))
                 .with_text(&subgraph.name);
             shapes.push(sg_shape);
+            element_bounds.push((sg_x, sg_y, sg_width, sg_height));
             
             // Layout nodes within subgraph
             for (node_idx, node_id) in subgraph.nodes.iter().enumerate() {
@@ -228,10 +234,12 @@ pub fn generate_elements(flowchart: &Flowchart) -> DiagramElements {
                     let y = sg_y + 300_000 + (node_idx as u32) * v_spacing;
                     
                     node_positions.insert(node.id.clone(), (x, y));
+                    node_shape_ids.insert(node.id.clone(), shape_id);
                     
-                    let shape = create_node_shape(node, x, y, node_width, node_height);
+                    let shape = create_node_shape(node, x, y, node_width, node_height, shape_id);
                     shapes.push(shape);
-                    _shape_id += 1;
+                    element_bounds.push((x, y, node_width, node_height));
+                    shape_id += 1;
                 }
             }
             
@@ -246,10 +254,12 @@ pub fn generate_elements(flowchart: &Flowchart) -> DiagramElements {
                 let y = orphan_y;
                 
                 node_positions.insert(node.id.clone(), (x, y));
+                node_shape_ids.insert(node.id.clone(), shape_id);
                 
-                let shape = create_node_shape(node, x, y, node_width, node_height);
+                let shape = create_node_shape(node, x, y, node_width, node_height, shape_id);
                 shapes.push(shape);
-                _shape_id += 1;
+                element_bounds.push((x, y, node_width, node_height));
+                shape_id += 1;
                 
                 orphan_y += v_spacing;
             }
@@ -271,26 +281,38 @@ pub fn generate_elements(flowchart: &Flowchart) -> DiagramElements {
             };
             
             node_positions.insert(node.id.clone(), (x, y));
+            node_shape_ids.insert(node.id.clone(), shape_id);
             
-            let shape = create_node_shape(node, x, y, node_width, node_height);
+            let shape = create_node_shape(node, x, y, node_width, node_height, shape_id);
             shapes.push(shape);
-            _shape_id += 1;
+            element_bounds.push((x, y, node_width, node_height));
+            shape_id += 1;
         }
     }
     
-    // Create connectors for connections
+    // Create connectors for connections with shape anchoring
     for conn in &flowchart.connections {
         if let (Some(&(from_x, from_y)), Some(&(to_x, to_y))) = 
             (node_positions.get(&conn.from), node_positions.get(&conn.to)) 
         {
-            let (start_x, start_y, end_x, end_y) = if is_horizontal {
-                (from_x + node_width, from_y + node_height / 2,
+            // Get shape IDs for anchoring
+            let from_shape_id = node_shape_ids.get(&conn.from).copied();
+            let to_shape_id = node_shape_ids.get(&conn.to).copied();
+            
+            // Determine connection sites and positions based on relative positions
+            let (start_site, end_site, start_x, start_y, end_x, end_y) = if is_horizontal {
+                // Horizontal flow: connect Right -> Left
+                (ConnectionSite::Right, ConnectionSite::Left,
+                 from_x + node_width, from_y + node_height / 2,
                  to_x, to_y + node_height / 2)
             } else {
-                (from_x + node_width / 2, from_y + node_height,
+                // Vertical flow: connect Bottom -> Top
+                (ConnectionSite::Bottom, ConnectionSite::Top,
+                 from_x + node_width / 2, from_y + node_height,
                  to_x + node_width / 2, to_y)
             };
             
+            // Use elbow connector for better auto-routing when shapes are not aligned
             let connector_type = if (start_x as i32 - end_x as i32).abs() < 100_000 
                                  || (start_y as i32 - end_y as i32).abs() < 100_000 {
                 ConnectorType::Straight
@@ -309,6 +331,14 @@ pub fn generate_elements(flowchart: &Flowchart) -> DiagramElements {
                 .with_line(ConnectorLine::new(line_color, 19050).with_dash(line_dash))
                 .with_end_arrow(ArrowType::Triangle);
             
+            // Anchor connector to shapes for auto-routing
+            if let Some(from_id) = from_shape_id {
+                connector = connector.connect_start(from_id, start_site);
+            }
+            if let Some(to_id) = to_shape_id {
+                connector = connector.connect_end(to_id, end_site);
+            }
+            
             if let Some(label) = &conn.label {
                 connector = connector.with_label(label);
             }
@@ -317,7 +347,15 @@ pub fn generate_elements(flowchart: &Flowchart) -> DiagramElements {
         }
     }
     
-    DiagramElements { shapes, connectors }
+    // Calculate bounding box for the entire diagram
+    let bounds = DiagramBounds::from_elements(&element_bounds);
+    
+    DiagramElements { 
+        shapes, 
+        connectors, 
+        bounds,
+        grouped: true, // Flowcharts should be grouped
+    }
 }
 
 fn get_subgraph_color(index: usize) -> &'static str {
@@ -325,7 +363,7 @@ fn get_subgraph_color(index: usize) -> &'static str {
     COLORS[index % COLORS.len()]
 }
 
-fn create_node_shape(node: &FlowNode, x: u32, y: u32, width: u32, height: u32) -> Shape {
+fn create_node_shape(node: &FlowNode, x: u32, y: u32, width: u32, height: u32, shape_id: u32) -> Shape {
     let shape_type = match node.shape {
         NodeShape::Rectangle => ShapeType::Rectangle,
         NodeShape::RoundedRect => ShapeType::RoundedRectangle,
@@ -342,6 +380,7 @@ fn create_node_shape(node: &FlowNode, x: u32, y: u32, width: u32, height: u32) -
     };
     
     Shape::new(shape_type, x, y, width, height)
+        .with_id(shape_id)
         .with_fill(ShapeFill::new(fill_color))
         .with_line(ShapeLine::new("1565C0", 2))
         .with_text(&node.label)

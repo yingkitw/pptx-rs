@@ -108,7 +108,7 @@ pub fn generate_elements(code: &str) -> DiagramElements {
         }
     }
     
-    DiagramElements { shapes, connectors }
+    DiagramElements::from_shapes_and_connectors(shapes, connectors)
 }
 
 #[cfg(test)]

@@ -5,10 +5,11 @@ use crate::generator::shapes_xml::generate_shape_xml;
 
 /// Render additional content elements (shapes, images, code blocks, connectors)
 pub fn render_additional_content(xml: &mut String, content: &SlideContent) {
-    // Render shapes
+    // Render shapes - use shape's fixed ID if set, otherwise auto-assign
     for (i, shape) in content.shapes.iter().enumerate() {
         xml.push('\n');
-        xml.push_str(&generate_shape_xml(shape, (i + 10) as u32));
+        let shape_id = shape.id.unwrap_or((i + 10) as u32);
+        xml.push_str(&generate_shape_xml(shape, shape_id));
     }
 
     // Render image placeholders
