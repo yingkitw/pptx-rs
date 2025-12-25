@@ -52,12 +52,86 @@ impl BulletStyle {
     }
 }
 
-/// A bullet point with optional style
+/// Text formatting for bullet points
+#[derive(Clone, Debug, Default)]
+pub struct BulletTextFormat {
+    pub bold: bool,
+    pub italic: bool,
+    pub underline: bool,
+    pub strikethrough: bool,
+    pub subscript: bool,
+    pub superscript: bool,
+    pub color: Option<String>,
+    pub highlight: Option<String>,
+    pub font_size: Option<u32>,
+    pub font_family: Option<String>,
+}
+
+impl BulletTextFormat {
+    pub fn new() -> Self {
+        Self::default()
+    }
+    
+    pub fn bold(mut self) -> Self {
+        self.bold = true;
+        self
+    }
+    
+    pub fn italic(mut self) -> Self {
+        self.italic = true;
+        self
+    }
+    
+    pub fn underline(mut self) -> Self {
+        self.underline = true;
+        self
+    }
+    
+    pub fn strikethrough(mut self) -> Self {
+        self.strikethrough = true;
+        self
+    }
+    
+    pub fn subscript(mut self) -> Self {
+        self.subscript = true;
+        self.superscript = false;
+        self
+    }
+    
+    pub fn superscript(mut self) -> Self {
+        self.superscript = true;
+        self.subscript = false;
+        self
+    }
+    
+    pub fn color(mut self, hex: &str) -> Self {
+        self.color = Some(hex.trim_start_matches('#').to_uppercase());
+        self
+    }
+    
+    pub fn highlight(mut self, hex: &str) -> Self {
+        self.highlight = Some(hex.trim_start_matches('#').to_uppercase());
+        self
+    }
+    
+    pub fn font_size(mut self, size: u32) -> Self {
+        self.font_size = Some(size);
+        self
+    }
+    
+    pub fn font_family(mut self, family: &str) -> Self {
+        self.font_family = Some(family.to_string());
+        self
+    }
+}
+
+/// A bullet point with optional style and formatting
 #[derive(Clone, Debug)]
 pub struct BulletPoint {
     pub text: String,
     pub level: u32,
     pub style: BulletStyle,
+    pub format: Option<BulletTextFormat>,
 }
 
 impl BulletPoint {
@@ -66,6 +140,7 @@ impl BulletPoint {
             text: text.to_string(),
             level: 0,
             style: BulletStyle::Bullet,
+            format: None,
         }
     }
     
@@ -76,6 +151,51 @@ impl BulletPoint {
     
     pub fn with_style(mut self, style: BulletStyle) -> Self {
         self.style = style;
+        self
+    }
+    
+    pub fn with_format(mut self, format: BulletTextFormat) -> Self {
+        self.format = Some(format);
+        self
+    }
+    
+    pub fn bold(mut self) -> Self {
+        self.format = Some(self.format.unwrap_or_default().bold());
+        self
+    }
+    
+    pub fn italic(mut self) -> Self {
+        self.format = Some(self.format.unwrap_or_default().italic());
+        self
+    }
+    
+    pub fn strikethrough(mut self) -> Self {
+        self.format = Some(self.format.unwrap_or_default().strikethrough());
+        self
+    }
+    
+    pub fn subscript(mut self) -> Self {
+        self.format = Some(self.format.unwrap_or_default().subscript());
+        self
+    }
+    
+    pub fn superscript(mut self) -> Self {
+        self.format = Some(self.format.unwrap_or_default().superscript());
+        self
+    }
+    
+    pub fn highlight(mut self, color: &str) -> Self {
+        self.format = Some(self.format.unwrap_or_default().highlight(color));
+        self
+    }
+    
+    pub fn color(mut self, hex: &str) -> Self {
+        self.format = Some(self.format.unwrap_or_default().color(hex));
+        self
+    }
+    
+    pub fn font_size(mut self, size: u32) -> Self {
+        self.format = Some(self.format.unwrap_or_default().font_size(size));
         self
     }
 }

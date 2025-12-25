@@ -24,7 +24,7 @@ use ppt_rs::generator::{
     Shape, ShapeType, ShapeFill, ShapeLine,
     Image, ImageBuilder,
     Connector, ConnectorLine, ArrowType, ArrowSize, LineDash,
-    BulletStyle, TextFormat,
+    BulletStyle, BulletPoint, TextFormat,
 };
 use ppt_rs::generator::shapes::{GradientFill, GradientDirection};
 use ppt_rs::prelude::{colors, themes, font_sizes};
@@ -930,43 +930,50 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // =========================================================================
     println!("✏️ Slide 26: Text Enhancements (NEW)");
     
-    // Demonstrate TextFormat capabilities
-    let _strikethrough_format = TextFormat::new().strikethrough();
-    let _highlight_format = TextFormat::new().highlight("FFFF00");
-    let _subscript_format = TextFormat::new().subscript();
-    let _superscript_format = TextFormat::new().superscript();
+    // Use BulletPoint with formatting
+    let strikethrough_bullet = BulletPoint::new("Strikethrough: This text is crossed out").strikethrough();
+    let highlight_bullet = BulletPoint::new("Highlight: Yellow background for emphasis").highlight("FFFF00");
+    let subscript_bullet = BulletPoint::new("Subscript: H₂O - for chemical formulas").subscript();
+    let superscript_bullet = BulletPoint::new("Superscript: x² - for math expressions").superscript();
+    let bold_colored = BulletPoint::new("Combined: Bold + Red color").bold().color("FF0000");
     
-    slides.push(
-        SlideContent::new("Text Enhancements - New Formatting")
-            .layout(SlideLayout::TitleAndContent)
-            .title_color("1F497D")
-            .title_bold(true)
-            .add_bullet("Strikethrough: For deleted or deprecated text")
-            .add_bullet("Highlight: Yellow background for emphasis")
-            .add_bullet("Subscript: H₂O chemical formulas")
-            .add_bullet("Superscript: x² mathematical expressions")
-            .add_bullet("Combined: Bold + Italic + Underline + Color")
-            .content_size(24)
-    );
+    let mut text_enhancements_slide = SlideContent::new("Text Enhancements - New Formatting")
+        .layout(SlideLayout::TitleAndContent)
+        .title_color("1F497D")
+        .title_bold(true)
+        .content_size(24);
+    text_enhancements_slide.bullets.push(strikethrough_bullet);
+    text_enhancements_slide.bullets.push(highlight_bullet);
+    text_enhancements_slide.bullets.push(subscript_bullet);
+    text_enhancements_slide.bullets.push(superscript_bullet);
+    text_enhancements_slide.bullets.push(bold_colored);
+    
+    slides.push(text_enhancements_slide);
 
     // =========================================================================
     // SLIDE 27: Font Size Presets (NEW v0.2.1)
     // =========================================================================
     println!("🔤 Slide 27: Font Size Presets (NEW)");
     
-    slides.push(
-        SlideContent::new("Font Size Presets")
-            .layout(SlideLayout::TitleAndContent)
-            .title_color("1F497D")
-            .title_bold(true)
-            .add_bullet(&format!("TITLE: {} (44pt)", font_sizes::TITLE / 100))
-            .add_bullet(&format!("SUBTITLE: {} (32pt)", font_sizes::SUBTITLE / 100))
-            .add_bullet(&format!("HEADING: {} (28pt)", font_sizes::HEADING / 100))
-            .add_bullet(&format!("BODY: {} (18pt)", font_sizes::BODY / 100))
-            .add_bullet(&format!("SMALL: {} (14pt)", font_sizes::SMALL / 100))
-            .add_bullet(&format!("CAPTION: {} (12pt)", font_sizes::CAPTION / 100))
-            .content_size(24)
-    );
+    // Demonstrate different font sizes per bullet
+    let large_bullet = BulletPoint::new(&format!("LARGE: {}pt - Extra large text", font_sizes::LARGE)).font_size(font_sizes::LARGE);
+    let heading_bullet = BulletPoint::new(&format!("HEADING: {}pt - Section headers", font_sizes::HEADING)).font_size(font_sizes::HEADING);
+    let body_bullet = BulletPoint::new(&format!("BODY: {}pt - Regular content", font_sizes::BODY)).font_size(font_sizes::BODY);
+    let small_bullet = BulletPoint::new(&format!("SMALL: {}pt - Smaller text", font_sizes::SMALL)).font_size(font_sizes::SMALL);
+    let caption_bullet = BulletPoint::new(&format!("CAPTION: {}pt - Captions and notes", font_sizes::CAPTION)).font_size(font_sizes::CAPTION);
+    
+    let mut font_size_slide = SlideContent::new("Font Size Presets - Each line different size")
+        .layout(SlideLayout::TitleAndContent)
+        .title_color("1F497D")
+        .title_bold(true)
+        .title_size(font_sizes::TITLE);
+    font_size_slide.bullets.push(large_bullet);
+    font_size_slide.bullets.push(heading_bullet);
+    font_size_slide.bullets.push(body_bullet);
+    font_size_slide.bullets.push(small_bullet);
+    font_size_slide.bullets.push(caption_bullet);
+    
+    slides.push(font_size_slide);
 
     // =========================================================================
     // SLIDE 28: Theme Colors (NEW v0.2.1)

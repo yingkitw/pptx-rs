@@ -36,25 +36,36 @@ pub use crate::generator::shapes::{
 pub use crate::elements::{Color, RgbColor, Position, Size};
 pub use crate::exc::Result;
 
-/// Font size module with common presets
+/// Font size module with common presets (in points)
+/// 
+/// These values can be used directly with `content_size()` and `title_size()`:
+/// ```ignore
+/// SlideContent::new("Title")
+///     .title_size(font_sizes::TITLE)
+///     .content_size(font_sizes::BODY)
+/// ```
 pub mod font_sizes {
-    /// Title font size (44pt) in hundredths of a point
-    pub const TITLE: u32 = 4400;
+    /// Title font size (44pt)
+    pub const TITLE: u32 = 44;
     /// Subtitle font size (32pt)
-    pub const SUBTITLE: u32 = 3200;
+    pub const SUBTITLE: u32 = 32;
     /// Heading font size (28pt)
-    pub const HEADING: u32 = 2800;
+    pub const HEADING: u32 = 28;
     /// Body font size (18pt)
-    pub const BODY: u32 = 1800;
+    pub const BODY: u32 = 18;
     /// Small font size (14pt)
-    pub const SMALL: u32 = 1400;
+    pub const SMALL: u32 = 14;
     /// Caption font size (12pt)
-    pub const CAPTION: u32 = 1200;
+    pub const CAPTION: u32 = 12;
     /// Code font size (14pt)
-    pub const CODE: u32 = 1400;
+    pub const CODE: u32 = 14;
+    /// Large font size (36pt)
+    pub const LARGE: u32 = 36;
+    /// Extra large font size (48pt)
+    pub const XLARGE: u32 = 48;
     
     /// Convert points to OOXML size units (hundredths of a point)
-    pub fn from_pt(pt: u32) -> u32 {
+    pub fn to_emu(pt: u32) -> u32 {
         pt * 100
     }
 }

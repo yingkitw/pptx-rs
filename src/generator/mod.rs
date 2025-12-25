@@ -53,7 +53,7 @@ pub mod media;
 pub use builder::{create_pptx, create_pptx_with_content};
 pub use notes_xml::{create_notes_xml, create_notes_rels_xml, create_notes_master_xml, create_notes_master_rels_xml};
 pub use xml::{SlideContent, SlideLayout};
-pub use slide_content::{CodeBlock, BulletStyle, BulletPoint};
+pub use slide_content::{CodeBlock, BulletStyle, BulletPoint, BulletTextFormat};
 pub use text::{TextFormat, FormattedText, TextFrame, Paragraph, Run, TextAlign, TextAnchor};
 pub use shapes::{Shape, ShapeType, ShapeFill, ShapeLine, GradientFill as ShapeGradientFill, GradientStop as ShapeGradientStop, GradientDirection as ShapeGradientDirection, FillType, emu_to_inches, inches_to_emu, cm_to_emu};
 pub use shapes_xml::{generate_shape_xml, generate_shapes_xml, generate_connector_xml};

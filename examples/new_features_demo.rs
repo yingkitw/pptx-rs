@@ -76,12 +76,12 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
             "Use TextFormat for rich text styling",
         ])
         .slide("Font Size Presets", &[
-            &format!("TITLE: {} (44pt)", font_sizes::TITLE / 100),
-            &format!("SUBTITLE: {} (32pt)", font_sizes::SUBTITLE / 100),
-            &format!("HEADING: {} (28pt)", font_sizes::HEADING / 100),
-            &format!("BODY: {} (18pt)", font_sizes::BODY / 100),
-            &format!("SMALL: {} (14pt)", font_sizes::SMALL / 100),
-            &format!("CAPTION: {} (12pt)", font_sizes::CAPTION / 100),
+            &format!("TITLE: {}pt - For main titles", font_sizes::TITLE),
+            &format!("SUBTITLE: {}pt - For subtitles", font_sizes::SUBTITLE),
+            &format!("HEADING: {}pt - For section headers", font_sizes::HEADING),
+            &format!("BODY: {}pt - For regular content", font_sizes::BODY),
+            &format!("SMALL: {}pt - For smaller text", font_sizes::SMALL),
+            &format!("CAPTION: {}pt - For captions", font_sizes::CAPTION),
         ])
         .slide("Text Effects", &[
             "Strikethrough: For deleted text",

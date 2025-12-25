@@ -9,7 +9,7 @@ mod centered_title;
 mod title_content;
 mod two_column;
 
-pub use common::{SlideXmlBuilder, generate_text_props};
+pub use common::{SlideXmlBuilder, generate_text_props, ExtendedTextProps, generate_text_props_extended};
 pub use blank::BlankLayout;
 pub use title_only::TitleOnlyLayout;
 pub use centered_title::CenteredTitleLayout;

@@ -1,12 +1,38 @@
 //! Slide layout implementations
 
-use crate::generator::slide_content::{SlideContent, BulletStyle};
+use crate::generator::slide_content::{SlideContent, BulletStyle, BulletPoint, BulletTextFormat};
 use crate::generator::package_xml::escape_xml;
 use crate::generator::slide::formatting::generate_text_props;
 use super::common::{SLIDE_HEADER, SLIDE_FOOTER, generate_title_shape};
+use crate::generator::layouts::ExtendedTextProps;
 use super::content::render_additional_content;
 
+/// Generate text properties XML for a bullet, merging slide defaults with bullet-specific format
+fn generate_bullet_text_props(
+    default_props: &ExtendedTextProps,
+    bullet_format: Option<&BulletTextFormat>,
+) -> String {
+    if let Some(fmt) = bullet_format {
+        let props = ExtendedTextProps {
+            size: fmt.font_size.map(|s| s * 100).unwrap_or(default_props.size),
+            bold: fmt.bold || default_props.bold,
+            italic: fmt.italic || default_props.italic,
+            underline: fmt.underline || default_props.underline,
+            strikethrough: fmt.strikethrough,
+            subscript: fmt.subscript,
+            superscript: fmt.superscript,
+            color: fmt.color.clone().or_else(|| default_props.color.clone()),
+            highlight: fmt.highlight.clone(),
+            font_family: fmt.font_family.clone().or_else(|| default_props.font_family.clone()),
+        };
+        props.to_xml()
+    } else {
+        default_props.to_xml()
+    }
+}
+
 /// Generate a bullet paragraph with style
+#[allow(dead_code)]
 fn generate_bullet_paragraph(text: &str, level: u32, style: BulletStyle, text_props: &str) -> String {
     let indent = 457200 + (level * 457200);
     let margin_left = level * 457200 + indent;
@@ -24,6 +50,31 @@ fn generate_bullet_paragraph(text: &str, level: u32, style: BulletStyle, text_pr
 </a:r>
 </a:p>"#,
         level, margin_left, indent, bullet_xml, text_props, escape_xml(text)
+    )
+}
+
+/// Generate a bullet paragraph from a BulletPoint with full formatting
+fn generate_bullet_paragraph_from_point(
+    bullet: &BulletPoint,
+    default_props: &ExtendedTextProps,
+) -> String {
+    let indent = 457200 + (bullet.level * 457200);
+    let margin_left = bullet.level * 457200 + indent;
+    let bullet_xml = bullet.style.to_xml();
+    let text_props = generate_bullet_text_props(default_props, bullet.format.as_ref());
+    
+    format!(
+        r#"
+<a:p>
+<a:pPr lvl="{}" marL="{}" indent="-{}">
+{}
+</a:pPr>
+<a:r>
+{}
+<a:t>{}</a:t>
+</a:r>
+</a:p>"#,
+        bullet.level, margin_left, indent, bullet_xml, text_props, escape_xml(&bullet.text)
     )
 }
 
@@ -152,7 +203,7 @@ pub fn create_title_and_big_content_slide(content: &SlideContent) -> String {
 <a:lstStyle/>"#
         );
 
-        let content_props = generate_text_props(
+        let default_props = ExtendedTextProps::with_basic(
             content_size,
             content.content_bold,
             content.content_italic,
@@ -163,21 +214,12 @@ pub fn create_title_and_big_content_slide(content: &SlideContent) -> String {
         // Use styled bullets if available, otherwise use plain content
         if !content.bullets.is_empty() {
             for bullet in &content.bullets {
-                xml.push_str(&generate_bullet_paragraph(
-                    &bullet.text,
-                    bullet.level,
-                    bullet.style,
-                    &content_props,
-                ));
+                xml.push_str(&generate_bullet_paragraph_from_point(bullet, &default_props));
             }
         } else {
             for bullet in &content.content {
-                xml.push_str(&generate_bullet_paragraph(
-                    bullet,
-                    0,
-                    content.bullet_style,
-                    &content_props,
-                ));
+                let bp = BulletPoint::new(bullet).with_style(content.bullet_style);
+                xml.push_str(&generate_bullet_paragraph_from_point(&bp, &default_props));
             }
         }
 
@@ -239,7 +281,7 @@ pub fn create_two_column_slide(content: &SlideContent) -> String {
 </p:sp>"#
     ));
 
-    let content_props = generate_text_props(
+    let default_props = ExtendedTextProps::with_basic(
         content_size,
         content.content_bold,
         content.content_italic,
@@ -278,21 +320,12 @@ pub fn create_two_column_slide(content: &SlideContent) -> String {
 
         if use_styled_bullets {
             for bullet in &content.bullets[..mid] {
-                xml.push_str(&generate_bullet_paragraph(
-                    &bullet.text,
-                    bullet.level,
-                    bullet.style,
-                    &content_props,
-                ));
+                xml.push_str(&generate_bullet_paragraph_from_point(bullet, &default_props));
             }
         } else {
             for bullet in &content.content[..mid] {
-                xml.push_str(&generate_bullet_paragraph(
-                    bullet,
-                    0,
-                    content.bullet_style,
-                    &content_props,
-                ));
+                let bp = BulletPoint::new(bullet).with_style(content.bullet_style);
+                xml.push_str(&generate_bullet_paragraph_from_point(&bp, &default_props));
             }
         }
 
@@ -327,21 +360,12 @@ pub fn create_two_column_slide(content: &SlideContent) -> String {
 
             if use_styled_bullets {
                 for bullet in &content.bullets[mid..] {
-                    xml.push_str(&generate_bullet_paragraph(
-                        &bullet.text,
-                        bullet.level,
-                        bullet.style,
-                        &content_props,
-                    ));
+                    xml.push_str(&generate_bullet_paragraph_from_point(bullet, &default_props));
                 }
             } else {
                 for bullet in &content.content[mid..] {
-                    xml.push_str(&generate_bullet_paragraph(
-                        bullet,
-                        0,
-                        content.bullet_style,
-                        &content_props,
-                    ));
+                    let bp = BulletPoint::new(bullet).with_style(content.bullet_style);
+                    xml.push_str(&generate_bullet_paragraph_from_point(&bp, &default_props));
                 }
             }
 
@@ -431,7 +455,7 @@ pub fn create_title_and_content_slide(content: &SlideContent) -> String {
 <a:lstStyle/>"#
         );
 
-        let content_props = generate_text_props(
+        let default_props = ExtendedTextProps::with_basic(
             content_size,
             content.content_bold,
             content.content_italic,
@@ -442,21 +466,12 @@ pub fn create_title_and_content_slide(content: &SlideContent) -> String {
         // Use styled bullets if available, otherwise use plain content
         if !content.bullets.is_empty() {
             for bullet in &content.bullets {
-                xml.push_str(&generate_bullet_paragraph(
-                    &bullet.text,
-                    bullet.level,
-                    bullet.style,
-                    &content_props,
-                ));
+                xml.push_str(&generate_bullet_paragraph_from_point(bullet, &default_props));
             }
         } else {
             for bullet in &content.content {
-                xml.push_str(&generate_bullet_paragraph(
-                    bullet,
-                    0,
-                    content.bullet_style,
-                    &content_props,
-                ));
+                let bp = BulletPoint::new(bullet).with_style(content.bullet_style);
+                xml.push_str(&generate_bullet_paragraph_from_point(&bp, &default_props));
             }
         }
 

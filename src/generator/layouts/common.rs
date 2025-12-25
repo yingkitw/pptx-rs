@@ -10,6 +10,89 @@ use crate::generator::slide_content::BulletStyle;
 pub const XML_DECL: &str = r#"<?xml version="1.0" encoding="UTF-8" standalone="yes"?>"#;
 pub const SLIDE_NS: &str = r#"xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main""#;
 
+/// Extended text properties for full formatting support
+#[derive(Clone, Debug, Default)]
+pub struct ExtendedTextProps {
+    pub size: u32,
+    pub bold: bool,
+    pub italic: bool,
+    pub underline: bool,
+    pub strikethrough: bool,
+    pub subscript: bool,
+    pub superscript: bool,
+    pub color: Option<String>,
+    pub highlight: Option<String>,
+    pub font_family: Option<String>,
+}
+
+impl ExtendedTextProps {
+    pub fn new(size: u32) -> Self {
+        Self {
+            size,
+            ..Default::default()
+        }
+    }
+    
+    pub fn with_basic(size: u32, bold: bool, italic: bool, underline: bool, color: Option<&str>) -> Self {
+        Self {
+            size,
+            bold,
+            italic,
+            underline,
+            color: color.map(|c| c.trim_start_matches('#').to_uppercase()),
+            ..Default::default()
+        }
+    }
+    
+    pub fn to_xml(&self) -> String {
+        let mut attrs = format!(
+            r#"<a:rPr lang="en-US" sz="{}" b="{}" i="{}" dirty="0""#,
+            self.size,
+            if self.bold { "1" } else { "0" },
+            if self.italic { "1" } else { "0" }
+        );
+
+        if self.underline {
+            attrs.push_str(r#" u="sng""#);
+        }
+        
+        if self.strikethrough {
+            attrs.push_str(r#" strike="sngStrike""#);
+        }
+        
+        if self.subscript {
+            attrs.push_str(r#" baseline="-25000""#);
+        } else if self.superscript {
+            attrs.push_str(r#" baseline="30000""#);
+        }
+
+        attrs.push('>');
+
+        if let Some(ref hex_color) = self.color {
+            let clean_color = hex_color.trim_start_matches('#').to_uppercase();
+            attrs.push_str(&format!(
+                r#"<a:solidFill><a:srgbClr val="{clean_color}"/></a:solidFill>"#
+            ));
+        }
+        
+        if let Some(ref highlight) = self.highlight {
+            let clean_color = highlight.trim_start_matches('#').to_uppercase();
+            attrs.push_str(&format!(
+                r#"<a:highlight><a:srgbClr val="{clean_color}"/></a:highlight>"#
+            ));
+        }
+        
+        if let Some(ref font) = self.font_family {
+            attrs.push_str(&format!(
+                r#"<a:latin typeface="{font}"/><a:cs typeface="{font}"/>"#
+            ));
+        }
+
+        attrs.push_str("</a:rPr>");
+        attrs
+    }
+}
+
 /// Generate text run properties XML
 pub fn generate_text_props(
     size: u32,
@@ -18,28 +101,12 @@ pub fn generate_text_props(
     underline: bool,
     color: Option<&str>,
 ) -> String {
-    let mut props = format!(
-        r#"<a:rPr lang="en-US" sz="{}" b="{}" i="{}" dirty="0""#,
-        size,
-        if bold { "1" } else { "0" },
-        if italic { "1" } else { "0" }
-    );
+    ExtendedTextProps::with_basic(size, bold, italic, underline, color).to_xml()
+}
 
-    if underline {
-        props.push_str(r#" u="sng""#);
-    }
-
-    props.push('>');
-
-    if let Some(hex_color) = color {
-        let clean_color = hex_color.trim_start_matches('#').to_uppercase();
-        props.push_str(&format!(
-            r#"<a:solidFill><a:srgbClr val="{clean_color}"/></a:solidFill>"#
-        ));
-    }
-
-    props.push_str("</a:rPr>");
-    props
+/// Generate text run properties XML with extended formatting
+pub fn generate_text_props_extended(props: &ExtendedTextProps) -> String {
+    props.to_xml()
 }
 
 /// Builder for slide XML with common structure
