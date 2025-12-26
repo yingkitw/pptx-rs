@@ -1,12 +1,14 @@
 [package]
 name = "ppt-rs"
-version = "0.1.8"
+version = "0.2.1"
 edition = "2024"
 authors = ["Ying Kit WONG"]
-description = "Create, read, and update PowerPoint 2007+ (.pptx) files."
+description = "Create, read, and update PowerPoint 2007+ (.pptx) files with rich formatting, bullet styles, themes, and templates."
 license = "Apache-2.0"
 repository = "https://github.com/yingkitw/ppt-rs"
 keywords = ["powerpoint", "ppt", "pptx", "openxml", "office"]
+categories = ["document-generation", "parsing"]
+readme = "README.md"
 
 [dependencies]
 zip = "0.6"

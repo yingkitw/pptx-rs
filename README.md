@@ -100,11 +100,13 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
 ### Core Capabilities
 - **Slides** - Multiple layouts (title-only, two-column, blank, etc.)
 - **Text** - Titles, bullets, formatting (bold, italic, colors, sizes)
+- **Bullet Styles** - Numbered, lettered, Roman numerals, custom characters, hierarchical
+- **Text Enhancements** - Strikethrough, highlight, subscript, superscript
 - **Tables** - Multi-line cells, styling, positioning
 - **Shapes** - 100+ shape types with gradient fills and transparency
 - **Connectors** - Straight, elbow, curved with arrows and dash styles
 - **Charts** - Bar, line, pie charts with multiple series
-- **Images** - Embed and position images
+- **Images** - Embed from files, base64, or bytes
 - **Reading** - Parse and modify existing PPTX files
 - **Repair** - Validate and fix damaged PPTX files
 
@@ -307,6 +309,106 @@ let elbow = Connector::elbow(1000000, 2000000, 3000000, 3000000)
     .with_arrows(ArrowType::Oval, ArrowType::Stealth);
 ```
 
+### Bullet Styles (NEW in v0.2.1)
+
+```rust
+use ppt_rs::generator::{SlideContent, BulletStyle, BulletPoint};
+
+// Numbered list
+let slide = SlideContent::new("Steps")
+    .add_numbered("First step")
+    .add_numbered("Second step")
+    .add_numbered("Third step");
+
+// Lettered list (a, b, c)
+let slide = SlideContent::new("Options")
+    .add_lettered("Option A")
+    .add_lettered("Option B");
+
+// Roman numerals (I, II, III)
+let slide = SlideContent::new("Chapters")
+    .add_styled_bullet("Introduction", BulletStyle::RomanUpper)
+    .add_styled_bullet("Main Content", BulletStyle::RomanUpper)
+    .add_styled_bullet("Conclusion", BulletStyle::RomanUpper);
+
+// Custom bullet characters
+let slide = SlideContent::new("Custom Bullets")
+    .add_styled_bullet("Star bullet", BulletStyle::Custom('★'))
+    .add_styled_bullet("Arrow bullet", BulletStyle::Custom('→'))
+    .add_styled_bullet("Check bullet", BulletStyle::Custom('✓'));
+
+// Hierarchical (sub-bullets)
+let slide = SlideContent::new("Hierarchy")
+    .add_bullet("Main point")
+    .add_sub_bullet("Supporting detail 1")
+    .add_sub_bullet("Supporting detail 2");
+```
+
+### Text Enhancements (NEW in v0.2.1)
+
+```rust
+use ppt_rs::generator::BulletPoint;
+use ppt_rs::prelude::font_sizes;
+
+// Per-bullet formatting
+let strikethrough = BulletPoint::new("Deleted text").strikethrough();
+let highlighted = BulletPoint::new("Important!").highlight("FFFF00");
+let subscript = BulletPoint::new("H₂O").subscript();
+let superscript = BulletPoint::new("x²").superscript();
+let styled = BulletPoint::new("Bold red text").bold().color("FF0000");
+
+// Per-bullet font sizes
+let large_text = BulletPoint::new("Big text").font_size(font_sizes::LARGE);
+let small_text = BulletPoint::new("Small text").font_size(font_sizes::SMALL);
+
+// Add to slide
+let mut slide = SlideContent::new("Formatted Text");
+slide.bullets.push(strikethrough);
+slide.bullets.push(highlighted);
+slide.bullets.push(large_text);
+```
+
+### Font Size Presets (NEW in v0.2.1)
+
+```rust
+use ppt_rs::prelude::font_sizes;
+
+// Available presets (in points)
+font_sizes::TITLE    // 44pt
+font_sizes::SUBTITLE // 32pt
+font_sizes::LARGE    // 36pt
+font_sizes::HEADING  // 28pt
+font_sizes::BODY     // 18pt
+font_sizes::SMALL    // 14pt
+font_sizes::CAPTION  // 12pt
+
+// Use with slide content
+let slide = SlideContent::new("Title")
+    .title_size(font_sizes::TITLE)
+    .content_size(font_sizes::BODY);
+```
+
+### Images from Base64 (NEW in v0.2.1)
+
+```rust
+use ppt_rs::generator::{Image, ImageBuilder};
+use ppt_rs::prelude::inches;
+
+// From base64 encoded string
+let base64_png = "iVBORw0KGgoAAAANSUhEUg...";
+let img = Image::from_base64(base64_png, 914400, 914400, "PNG")
+    .position(inches(2.0), inches(3.0));
+
+// From raw bytes
+let bytes = vec![0x89, 0x50, 0x4E, 0x47, ...]; // PNG data
+let img = Image::from_bytes(bytes, 914400, 914400, "PNG");
+
+// Using builder
+let img = ImageBuilder::from_base64(base64_png, inches(2.0), inches(2.0), "PNG")
+    .position(inches(4.0), inches(3.0))
+    .build();
+```
+
 ## What Makes This Different
 
 Unlike other Rust PPTX crates that:
@@ -317,7 +419,7 @@ Unlike other Rust PPTX crates that:
 
 `ppt-rs`:
 - ✅ Generates **valid PPTX files** from day one
-- ✅ **Actively maintained** with comprehensive test coverage (650+ tests)
+- ✅ **Actively maintained** with comprehensive test coverage (700+ tests)
 - ✅ **Complete XML structure** following ECMA-376 standard
 - ✅ **Validation tools** - Built-in validation command for quality assurance
 - ✅ **Alignment testing** - Framework for ensuring compatibility with python-pptx
@@ -327,7 +429,7 @@ Unlike other Rust PPTX crates that:
 
 ### Validation
 - Built-in validation command for ECMA-376 compliance checking
-- Comprehensive test suite (650+ tests)
+- Comprehensive test suite (700+ tests)
 - Integration tests for end-to-end validation
 
 ### Alignment Testing
@@ -337,11 +439,12 @@ Unlike other Rust PPTX crates that:
 
 ## Technical Details
 
+- **Version**: 0.2.1
 - **Format**: Microsoft PowerPoint 2007+ (.pptx)
 - **Standard**: ECMA-376 Office Open XML
 - **Compatibility**: PowerPoint, LibreOffice, Google Slides, Keynote
-- **Architecture**: Layered design with clear separation of concerns
-- **Test Coverage**: 650+ tests covering all major features
+- **Architecture**: Modular design with clear separation of concerns
+- **Test Coverage**: 700+ tests covering all major features
 
 ## Templates
 
@@ -392,7 +495,7 @@ Available templates: `business_proposal`, `training_material`, `status_report`, 
 Pre-defined color themes for consistent styling:
 
 ```rust
-use ppt_rs::prelude::themes;
+use ppt_rs::prelude::{themes, colors};
 
 // Available themes
 themes::CORPORATE  // Professional blue/gray
@@ -407,6 +510,28 @@ themes::CARBON     // IBM Carbon Design
 let theme = themes::CORPORATE;
 println!("Primary: {}", theme.primary);     // "1565C0"
 println!("Background: {}", theme.background); // "FFFFFF"
+```
+
+### Extended Color Palettes (NEW in v0.2.1)
+
+```rust
+use ppt_rs::prelude::colors;
+
+// Basic colors
+colors::RED, colors::GREEN, colors::BLUE, colors::WHITE, colors::BLACK
+
+// Corporate colors
+colors::CORPORATE_BLUE, colors::CORPORATE_GREEN, colors::CORPORATE_RED
+
+// Material Design colors
+colors::MATERIAL_RED, colors::MATERIAL_BLUE, colors::MATERIAL_GREEN
+colors::MATERIAL_PURPLE, colors::MATERIAL_INDIGO, colors::MATERIAL_CYAN
+colors::MATERIAL_TEAL, colors::MATERIAL_LIME, colors::MATERIAL_AMBER
+
+// IBM Carbon Design colors
+colors::CARBON_BLUE_60, colors::CARBON_BLUE_40
+colors::CARBON_GRAY_100, colors::CARBON_GRAY_80, colors::CARBON_GRAY_20
+colors::CARBON_GREEN_50, colors::CARBON_RED_60, colors::CARBON_PURPLE_60
 ```
 
 ## Layout Helpers

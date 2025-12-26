@@ -39,10 +39,15 @@ pub use crate::exc::Result;
 /// Font size module with common presets (in points)
 /// 
 /// These values can be used directly with `content_size()` and `title_size()`:
-/// ```ignore
-/// SlideContent::new("Title")
+/// ```
+/// use ppt_rs::prelude::{SlideContent, font_sizes};
+/// 
+/// let slide = SlideContent::new("Title")
 ///     .title_size(font_sizes::TITLE)
-///     .content_size(font_sizes::BODY)
+///     .content_size(font_sizes::BODY);
+/// 
+/// assert_eq!(font_sizes::TITLE, 44);
+/// assert_eq!(font_sizes::BODY, 18);
 /// ```
 pub mod font_sizes {
     /// Title font size (44pt)
